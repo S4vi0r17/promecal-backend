@@ -22,23 +22,25 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse login(LoginRequest request) {
-
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(),request.getPassword()));
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         UserDetails user = userRepository.findByUsername(request.getUsername()).orElseThrow();
-        String token=jwtService.getToken(user);
+        String token = jwtService.getToken(user);
+
         return AuthResponse.builder()
                 .token(token)
                 .build();
     }
+
     public AuthResponse register(RegisterRequest request) {
         User user = User.builder().username(request.getUsername())
-                .password(request.getPassword())
-                .firstName(request.getFirstName())
-                .lastname(request.getLastName())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .firstName(request.getFirstname())
+                .lastname(request.getLastname())
                 .country(request.getCountry())
                 .rol(Role.USER)
                 .build();
         userRepository.save(user);
+
         return AuthResponse.builder().token(jwtService.getToken(user)).build();
     }
 }
