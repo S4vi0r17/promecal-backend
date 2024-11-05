@@ -9,5 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UsuarioController {
     //Endpoint para obtener lista de usuarios
     @GetMapping
-    public String obtenerUsuarios() { return "asdasdad";}
+    public String obtenerUsuarios() {
+        return "asdasdad";
+    }
 }
