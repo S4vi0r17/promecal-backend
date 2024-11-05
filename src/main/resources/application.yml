@@ -22,6 +22,8 @@ spring:
 api:
   security:
     secret: ${JWT_SECRET:secret}
+
 logging:
   level:
+    org.springframework.security: DEBUG
     org.hibernate: DEBUG
