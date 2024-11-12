@@ -28,9 +28,9 @@ public class Usuario implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Agregamos ROLE_ al nombre del rol para cumplir con la convención de Spring Security
         return List.of(new SimpleGrantedAuthority(rol.name()));
     }
-
     // Métodos obligatorios de UserDetails en inglés
     @Override
     public String getUsername() {
