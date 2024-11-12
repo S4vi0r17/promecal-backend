@@ -17,39 +17,46 @@ import java.util.List;
 public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
+
     //Endpoint para obtener la lista de usuario
     @GetMapping
-    public List<UsuarioListaDTO> obtenerTodosLosUsuarios() {return usuarioService.obtenerTodosLosUsuarios();}
+    public List<UsuarioListaDTO> obtenerTodosLosUsuarios() {
+        return usuarioService.obtenerTodosLosUsuarios();
+    }
+
     //Endpoint para guardar un usuario
     @PostMapping
     public ResponseEntity<String> insertarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
-        try{
+        try {
             usuarioService.insertarUsuario(usuarioDTO);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar usuario"+e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar usuario" + e.getMessage());
         }
     }
+
     //Endpoint para obtener los detalles un usuario por id
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioDTO> obtenerDetallesUsuario(@PathVariable Long id){
-        try{
+    public ResponseEntity<UsuarioDTO> obtenerDetallesUsuario(@PathVariable Long id) {
+        try {
             UsuarioDTO usuarioDTO = usuarioService.obtenerUsuarioPorId(id);
             return new ResponseEntity<>(usuarioDTO, HttpStatus.OK);
-        }catch(RuntimeException e){
+        } catch (RuntimeException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
+
     // Endpoint paraActualizar un usuario
     @PutMapping("/{id}")
     public ResponseEntity<String> actualizarUsuario(@PathVariable Long id, @RequestBody UsuarioDTO usuariodto) {
-        try{
+        try {
             usuarioService.actualizarUsuario(id, usuariodto);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar el usuario"+e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar el usuario" + e.getMessage());
         }
     }
+
     // Eliminar un usuario
     @DeleteMapping("/{id}")
     public ResponseEntity<String> eliminarUsuario(@PathVariable Long id) {

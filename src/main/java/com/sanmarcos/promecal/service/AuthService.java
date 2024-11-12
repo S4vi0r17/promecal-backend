@@ -29,8 +29,9 @@ public class AuthService {
                 .token(token)
                 .build();
     }
+
     public AuthResponse register(RegisterRequest request) {
-        Usuario usuario= new Usuario();
+        Usuario usuario = new Usuario();
         usuario.setNombreusuario(request.getNombreusuario());
         usuario.setContrasena(passwordEncoder.encode(request.getContrasena()));
         usuario.setNombrecompleto(request.getNombrecompleto());

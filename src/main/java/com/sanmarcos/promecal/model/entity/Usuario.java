@@ -8,10 +8,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+
 @Entity
 @Data
-@Table(name="usuarios", uniqueConstraints = {@UniqueConstraint(columnNames = {"nombreusuario"})})
-public class Usuario implements UserDetails{
+@Table(name = "usuarios", uniqueConstraints = {@UniqueConstraint(columnNames = {"nombreusuario"})})
+public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,15 +30,18 @@ public class Usuario implements UserDetails{
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(rol.name()));
     }
+
     // Métodos obligatorios de UserDetails en inglés
     @Override
     public String getUsername() {
         return nombreusuario;
     }
+
     @Override
     public String getPassword() {
         return contrasena;
     }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

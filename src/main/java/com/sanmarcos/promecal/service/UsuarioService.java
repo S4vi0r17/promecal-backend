@@ -18,6 +18,7 @@ public class UsuarioService {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     // Crear un nuevo usuario
     public void insertarUsuario(UsuarioDTO usuariodto) {
 
@@ -28,9 +29,10 @@ public class UsuarioService {
         usuario.setRol(usuariodto.getRol());
         usuarioRepository.save(usuario);
     }
+
     // Obtener todos los usuarios
     public List<UsuarioListaDTO> obtenerTodosLosUsuarios() {
-        return usuarioRepository.findAll().stream().map(usuario ->{
+        return usuarioRepository.findAll().stream().map(usuario -> {
             UsuarioListaDTO usuarioListaDTO = new UsuarioListaDTO();
             usuarioListaDTO.setNombreusuario(usuario.getNombreusuario());
             usuarioListaDTO.setNombrecompleto(usuario.getNombrecompleto());
@@ -40,9 +42,10 @@ public class UsuarioService {
             return usuarioListaDTO;
         }).collect(Collectors.toList());
     }
+
     // Obtener un usuario por ID
     public UsuarioDTO obtenerUsuarioPorId(Long id) {
-        Usuario usuario = usuarioRepository.findById(id).orElseThrow(()->new RuntimeException("Usuario no encontrado"));
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         UsuarioDTO usuarioDTO = new UsuarioDTO();
         usuarioDTO.setNombreusuario(usuario.getNombreusuario());
         usuarioDTO.setNombrecompleto(usuario.getNombrecompleto());
@@ -50,18 +53,20 @@ public class UsuarioService {
         usuarioDTO.setRol(usuario.getRol());
         return usuarioDTO;
     }
+
     //Metodo para actualizar un evento
     public void actualizarUsuario(Long id, UsuarioDTO usuarioDTO) throws IOException {
-        Usuario usuario = usuarioRepository.findById(id).orElseThrow(()->new RuntimeException("Usuario no encontrado"));
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         usuario.setNombreusuario(usuarioDTO.getNombreusuario());
         usuario.setCorreoelectronico(usuarioDTO.getCorreoelectronico());
         usuario.setNombrecompleto(usuarioDTO.getNombrecompleto());
         usuario.setRol(usuarioDTO.getRol());
         usuarioRepository.save(usuario);
     }
+
     // Eliminar usuario
     public void eliminarUsuario(Long id) {
-        Usuario usuario = usuarioRepository.findById(id).orElseThrow(()->new RuntimeException("Usuario no encontrado"));
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         usuarioRepository.delete(usuario);
     }
 
