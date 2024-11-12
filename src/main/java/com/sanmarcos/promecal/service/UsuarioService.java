@@ -20,7 +20,7 @@ public class UsuarioService {
     private PasswordEncoder passwordEncoder;
 
     // Crear un nuevo usuario
-    public void insertarUsuario(UsuarioDTO usuariodto) {
+    public Usuario insertarUsuario(UsuarioDTO usuariodto) {
 
         Usuario usuario = new Usuario();
         usuario.setNombreusuario(usuariodto.getNombreusuario());
@@ -29,6 +29,7 @@ public class UsuarioService {
         usuario.setNombrecompleto(usuariodto.getNombrecompleto());
         usuario.setRol(usuariodto.getRol());
         usuarioRepository.save(usuario);
+        return usuario;
     }
 
     // Obtener todos los usuarios
