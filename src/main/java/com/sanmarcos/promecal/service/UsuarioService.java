@@ -23,6 +23,7 @@ public class UsuarioService {
     public void insertarUsuario(UsuarioDTO usuariodto) {
 
         Usuario usuario = new Usuario();
+        usuario.setNombreusuario(usuariodto.getNombreusuario());
         usuario.setContrasena(passwordEncoder.encode(usuariodto.getContrasena()));
         usuario.setCorreoelectronico(usuariodto.getCorreoelectronico());
         usuario.setNombrecompleto(usuariodto.getNombrecompleto());
