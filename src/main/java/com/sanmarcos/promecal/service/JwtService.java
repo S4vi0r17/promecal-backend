@@ -36,7 +36,7 @@ public class JwtService {
         extraClaims.put("role", rol.name());  // Agregar el rol como cadena en los claims
         return generateToken(extraClaims, user);
     }
-    // Método privado que construye el token con claims adicionales y firma HS256
+    // Metodo privado que construye el token con claims adicionales y firma HS256
     private String generateToken(Map<String, Object> extraClaims, UserDetails user) {
         return Jwts.builder()
                 .setClaims(extraClaims)
