@@ -2,6 +2,8 @@ package com.sanmarcos.promecal.service;
 
 import com.sanmarcos.promecal.model.dto.AuthResponse;
 import com.sanmarcos.promecal.model.dto.LoginRequest;
+import com.sanmarcos.promecal.model.dto.RegisterRequest;
+import com.sanmarcos.promecal.model.entity.Usuario;
 import com.sanmarcos.promecal.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,16 +29,15 @@ public class AuthService {
                 .token(token)
                 .build();
     }
-    /*
     public AuthResponse register(RegisterRequest request) {
-        Usuario usuario= Usuario.builder().nombreusuario(request.getNombreusuario()).
-                contrasena(passwordEncoder.encode(request.getContrasena()))
-                .nombrecompleto(request.getNombrecompleto())
-                .correoelectronico(request.getCorreoelectronico())
-                .rol(request.getRol())
-                .build();
+        Usuario usuario= new Usuario();
+        usuario.setNombreusuario(request.getNombreusuario());
+        usuario.setContrasena(passwordEncoder.encode(request.getContrasena()));
+        usuario.setNombrecompleto(request.getNombrecompleto());
+        usuario.setCorreoelectronico(request.getCorreoelectronico());
+        usuario.setRol(request.getRol());
         usuarioRepository.save(usuario);
 
         return AuthResponse.builder().token(jwtService.getToken(usuario)).build();
-    }*/
+    }
 }
