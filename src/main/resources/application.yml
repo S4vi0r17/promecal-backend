@@ -7,9 +7,7 @@ spring:
   application:
     name: promecal
   datasource:
-    url: jdbc:postgresql://localhost:5432/promecal
-    username: postgres
-    password: benites1234
+    url: jdbc:postgresql://ep-twilight-rice-a5xb2jia.us-east-2.aws.neon.tech/bd_promecal?user=bd_promecal_owner&password=7TngGZJkP8VB&sslmode=require
     driver-class-name: org.postgresql.Driver
     hibernate:
       ddl-auto: update
