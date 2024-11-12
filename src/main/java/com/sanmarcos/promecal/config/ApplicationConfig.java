@@ -1,7 +1,7 @@
 package com.sanmarcos.promecal.config;
 
 
-import com.sanmarcos.promecal.repository.UserRepository;
+import com.sanmarcos.promecal.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class ApplicationConfig {
 
     @Autowired
-    private final UserRepository userRepository;
+    private final UsuarioRepository usuarioRepository;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
@@ -42,7 +42,7 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailService() {
-        return username -> userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return nombreusuario -> usuarioRepository.findByNombreusuario(nombreusuario)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
     }
 }

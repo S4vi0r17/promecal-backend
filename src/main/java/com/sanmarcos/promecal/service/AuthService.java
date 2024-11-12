@@ -2,10 +2,7 @@ package com.sanmarcos.promecal.service;
 
 import com.sanmarcos.promecal.model.dto.AuthResponse;
 import com.sanmarcos.promecal.model.dto.LoginRequest;
-import com.sanmarcos.promecal.model.dto.RegisterRequest;
-import com.sanmarcos.promecal.model.entity.Role;
-import com.sanmarcos.promecal.model.entity.User;
-import com.sanmarcos.promecal.repository.UserRepository;
+import com.sanmarcos.promecal.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,31 +13,30 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final UserRepository userRepository;
+    private final UsuarioRepository usuarioRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse login(LoginRequest request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        UserDetails user = userRepository.findByUsername(request.getUsername()).orElseThrow();
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getNombreusuario(), request.getContrasena()));
+        UserDetails user = usuarioRepository.findByNombreusuario(request.getNombreusuario()).orElseThrow();
         String token = jwtService.getToken(user);
 
         return AuthResponse.builder()
                 .token(token)
                 .build();
     }
-
+    /*
     public AuthResponse register(RegisterRequest request) {
-        User user = User.builder().username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .firstName(request.getFirstname())
-                .lastname(request.getLastname())
-                .country(request.getCountry())
-                .rol(Role.USER)
+        Usuario usuario= Usuario.builder().nombreusuario(request.getNombreusuario()).
+                contrasena(passwordEncoder.encode(request.getContrasena()))
+                .nombrecompleto(request.getNombrecompleto())
+                .correoelectronico(request.getCorreoelectronico())
+                .rol(request.getRol())
                 .build();
-        userRepository.save(user);
+        usuarioRepository.save(usuario);
 
-        return AuthResponse.builder().token(jwtService.getToken(user)).build();
-    }
+        return AuthResponse.builder().token(jwtService.getToken(usuario)).build();
+    }*/
 }

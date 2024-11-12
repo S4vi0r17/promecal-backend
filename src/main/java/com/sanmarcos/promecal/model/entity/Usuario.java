@@ -1,41 +1,43 @@
 package com.sanmarcos.promecal.model.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
-
 @Entity
-@Builder
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
-public class User implements UserDetails {
+@Table(name="usuarios", uniqueConstraints = {@UniqueConstraint(columnNames = {"nombreusuario"})})
+public class Usuario implements UserDetails{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(nullable = false)
-    private String username;
+    private String nombreusuario;
 
-    private String firstName;
-    private String lastname;
-    private String country;
-    private String password;
+    private String nombrecompleto;
+    private String correoelectronico;
+    private String contrasena;
 
     @Enumerated(EnumType.STRING)
-    Role rol;
+    Rol rol;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(rol.name()));
     }
-
+    // Métodos obligatorios de UserDetails en inglés
+    @Override
+    public String getUsername() {
+        return nombreusuario;
+    }
+    @Override
+    public String getPassword() {
+        return contrasena;
+    }
     @Override
     public boolean isAccountNonExpired() {
         return true;
