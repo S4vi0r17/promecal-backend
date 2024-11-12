@@ -36,7 +36,6 @@ public class UsuarioService {
             UsuarioListaDTO usuarioListaDTO = new UsuarioListaDTO();
             usuarioListaDTO.setNombreusuario(usuario.getNombreusuario());
             usuarioListaDTO.setNombrecompleto(usuario.getNombrecompleto());
-            usuarioListaDTO.setContrasena(usuario.getContrasena());
             usuarioListaDTO.setRol(usuario.getRol());
             usuarioListaDTO.setId(usuario.getId());
             return usuarioListaDTO;

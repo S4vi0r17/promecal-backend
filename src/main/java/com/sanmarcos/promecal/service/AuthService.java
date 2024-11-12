@@ -21,8 +21,16 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse login(LoginRequest request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getNombreusuario(), request.getContrasena()));
-        UserDetails user = usuarioRepository.findByNombreusuario(request.getNombreusuario()).orElseThrow();
+        // Autenticación usando el nombre de usuario y la contraseña en texto plano
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getNombreusuario(), request.getContrasena())
+        );
+
+        // Buscar al usuario por su nombre de usuario
+        UserDetails user = usuarioRepository.findByNombreusuario(request.getNombreusuario())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Generar el token JWT
         String token = jwtService.getToken(user);
 
         return AuthResponse.builder()
