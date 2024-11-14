@@ -85,7 +85,7 @@ public class ProformaServicioService {
         return proformaServicioDTO;
     }
 
-    // Método para actualizar una proforma de servicio
+    // Metodo para actualizar una proforma de servicio
     public void actualizarProformaServicio(Long id, ProformaServicioDTO proformaServicioDTO) throws IOException {
         ProformaServicio proformaServicio = proformaServicioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Proforma de Servicio no encontrada"));

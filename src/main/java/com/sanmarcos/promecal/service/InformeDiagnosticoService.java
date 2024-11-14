@@ -31,6 +31,7 @@ public class InformeDiagnosticoService {
         informeDiagnostico.setFecha(informeDiagnosticoDTO.getFecha());
         informeDiagnostico.setEstadoActual(informeDiagnosticoDTO.getEstadoActual());
         informeDiagnostico.setNumeroSerie(informeDiagnosticoDTO.getNumeroSerie());
+        informeDiagnostico.setProblemasEncontrados(informeDiagnosticoDTO.getProblemasEncontrados());
         informeDiagnostico.setFactibilidadReparacion(informeDiagnosticoDTO.getFactibilidadReparacion());
         informeDiagnostico.setRecomendaciones(informeDiagnosticoDTO.getRecomendaciones());
         informeDiagnostico.setDiagnosticoTecnico(informeDiagnosticoDTO.getDiagnosticoTecnico());
@@ -49,6 +50,15 @@ public class InformeDiagnosticoService {
         String name=driveService.uploadPdfToDrive(pdfcreado,"informe");
         System.out.println(name);
         emailService.enviarCorreo("Jefferson.asencios@unmsm.edu.pe",name);
+        // Borrar el archivo después de enviarlo por correo
+        if (pdfcreado.exists()) {
+            boolean deleted = pdfcreado.delete();
+            if (deleted) {
+                System.out.println("El archivo PDF se ha borrado correctamente.");
+            } else {
+                System.out.println("No se pudo borrar el archivo PDF.");
+            }
+        }
         ;
     }
 
