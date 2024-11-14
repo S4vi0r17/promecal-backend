@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 
 @Data
 public class InformeDiagnosticoDTO {
-    private Long id;
     private Long id_ordenTrabajo;
     private String numeroSerie;
     private String estadoActual;

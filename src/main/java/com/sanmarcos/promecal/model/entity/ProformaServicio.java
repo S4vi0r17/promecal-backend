@@ -36,6 +36,6 @@ public class ProformaServicio {
     @Column(name = "fecha", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime fecha;
 
-    @Column(name = "boletaurl", length = 50)
+    @Column(name = "boletaurl", length = 100)
     private String boletaUrl;
 }

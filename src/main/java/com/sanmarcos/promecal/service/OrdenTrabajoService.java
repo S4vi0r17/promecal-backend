@@ -4,21 +4,17 @@ import com.sanmarcos.promecal.model.dto.OrdenTrabajoDTO;
 import com.sanmarcos.promecal.model.dto.OrdenTrabajoHistorialDTO;
 import com.sanmarcos.promecal.model.dto.OrdenTrabajoListaDTO;
 import com.sanmarcos.promecal.model.dto.OrdenTrabajoVistaDTO;
-import com.sanmarcos.promecal.model.entity.Cliente;
-import com.sanmarcos.promecal.model.entity.Documento;
-import com.sanmarcos.promecal.model.entity.OrdenTrabajo;
-import com.sanmarcos.promecal.model.entity.OrdenTrabajoHistorial;
-import com.sanmarcos.promecal.repository.ClienteRepository;
-import com.sanmarcos.promecal.repository.DocumentoRepository;
-import com.sanmarcos.promecal.repository.OrdenTrabajoHistorialRepository;
-import com.sanmarcos.promecal.repository.OrdenTrabajoRepository;
+import com.sanmarcos.promecal.model.entity.*;
+import com.sanmarcos.promecal.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,37 +29,53 @@ public class OrdenTrabajoService {
     ClienteRepository clienteRepository;
     @Autowired
     DocumentoRepository documentoRepository;
+    @Autowired
+    InformeDiagnosticoRepository informeDiagnosticoRepository;
+    @Autowired
+    ProformaServicioRepository proformaServicioRepository;
 
-    //Obtener ordenes de trabajo
     public List<OrdenTrabajoListaDTO> obtenerOrdenesTrabajoConFiltros(
             LocalDateTime fechaInicio,
             LocalDateTime fechaFin,
-            Long clienteId,
-            String tipoEquipo,
-            String numeroOrden) {
+            String dni,
+            String modelo,
+            String codigo) {
 
+        // Filtro básico para estado = true
         Specification<OrdenTrabajo> spec = Specification.where((root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.get("estado"), true));  // Filtro para estado = true
+                criteriaBuilder.equal(root.get("estado"), true));
 
+        // Filtro por fecha (rango)
         if (fechaInicio != null && fechaFin != null) {
             spec = spec.and((root, query, criteriaBuilder) ->
                     criteriaBuilder.between(root.get("fecha"), fechaInicio, fechaFin));
         }
-        if (clienteId != null) {
-            spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get("cliente").get("id"), clienteId));
+
+        // Filtro por cliente (buscando cliente a través del dni)
+        if (dni != null && !dni.isEmpty()) {
+            // Aquí buscamos el id del cliente basado en el dni
+            Optional<Cliente> cliente = clienteRepository.findByDni(dni);
+            if (cliente.isPresent()) {
+                // Si encontramos al cliente, filtramos por su id
+                spec = spec.and((root, query, criteriaBuilder) ->
+                        criteriaBuilder.equal(root.get("cliente").get("id"), cliente.get().getId()));
+            }
         }
-        if (tipoEquipo != null && !tipoEquipo.isEmpty()) {
+        // Filtro por modelo
+        if (modelo != null && !modelo.isEmpty()) {
             spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get("tipoEquipo"), tipoEquipo));
-        }
-        if (numeroOrden != null && !numeroOrden.isEmpty()) {
-            spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get("codigo"), numeroOrden));
+                    criteriaBuilder.equal(root.get("modelo"), modelo));
         }
 
+        // Filtro por código
+        if (codigo != null && !codigo.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("codigo"), codigo));
+        }
+
+        // Ejecutar la consulta con los filtros
         return ordenTrabajoRepository.findAll(spec).stream()
-                .map(this::convertirAListaDTO)
+                .map(this::convertirAListaDTO)  // Convertir a DTO
                 .collect(Collectors.toList());
     }
 
@@ -109,7 +121,7 @@ public class OrdenTrabajoService {
         documento.setRutaArchivo(driveService.uploadPdfToDrive(file, "remision"));
         documento.setFechaSubida(LocalDateTime.now());
         documento.setNombre(file.getName());
-        documentoRepository.save(documento); // Asegúrate de que Documento esté guardado
+        documentoRepository.save(documento);
         // Asociar el documento a la orden de trabajo
         ordenTrabajo.setDocumento(documento);
         // Guardar la orden de trabajo
@@ -158,80 +170,116 @@ public class OrdenTrabajoService {
         ordenTrabajoVistaDTO.setDocumentourl(ordenTrabajo.getDocumento().getRutaArchivo());
         return ordenTrabajoVistaDTO;
     }
+
+    // Metodo para actualizar las entidades relacionadas con el código de la orden de trabajo
+    private void actualizarEntidadesRelacionadas(String codigoAntiguo, String codigoNuevo) {
+        // Obtener la OrdenTrabajo por el código
+        OrdenTrabajo ordenTrabajo = ordenTrabajoRepository.findByCodigo(codigoAntiguo)
+                .orElseThrow(() -> new RuntimeException("Orden de trabajo no encontrada"));
+
+    // Obtener los informes relacionados con esta orden de trabajo
+        List<InformeDiagnostico> informes = informeDiagnosticoRepository.findByCodigoOrdenTrabajo(codigoAntiguo);
+        for (InformeDiagnostico informe : informes) {
+            informe.setCodigoOrdenTrabajo(codigoNuevo);
+            informeDiagnosticoRepository.save(informe);
+        }
+
+        // Actualizar las entidades ProformaServicio
+        List<ProformaServicio> proformas = proformaServicioRepository.findAllByOrdenTrabajo(ordenTrabajo);
+        for (ProformaServicio proforma : proformas) {
+            proforma.getOrdenTrabajo().setCodigo(codigoNuevo);  // Aquí actualizas la relación de la orden de trabajo
+            proformaServicioRepository.save(proforma);
+        }
+    }
     // Metodo para actualizar una orden de trabajo
     public void actualizarOrdenTrabajo(Long id, OrdenTrabajoDTO ordenTrabajoDTO, File file) {
-        // Obtener la orden de trabajo
+        // Verificar si el código ya existe en otra orden de trabajo
+        if (ordenTrabajoRepository.existsByCodigoAndIdNot(ordenTrabajoDTO.getCodigo(), id)) {
+            throw new RuntimeException("El codigo del dto y entity ya está en uso."+ordenTrabajoDTO.getCodigo());
+        }
+        // Obtener la orden de trabajo existente
         OrdenTrabajo ordenTrabajo = ordenTrabajoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Orden de Trabajo no encontrada"));
+        try {
 
-        // Compara los valores antiguos con los nuevos y guarda el historial de modificaciones si hay cambios
-        if (!ordenTrabajo.getDescripcion().equals(ordenTrabajoDTO.getDescripcion())) {
-            registrarHistorial(ordenTrabajo, "descripcion", ordenTrabajo.getDescripcion(), ordenTrabajoDTO.getDescripcion());
-            ordenTrabajo.setDescripcion(ordenTrabajoDTO.getDescripcion());
+            if (!ordenTrabajo.getCodigo().equals(ordenTrabajoDTO.getCodigo())) {
+                    registrarHistorial(ordenTrabajo, "codigo", ordenTrabajo.getCodigo(), ordenTrabajoDTO.getCodigo());
+                // Actualizar el código en las entidades relacionadas (InformeDiagnostico, ProformaServicio)
+                actualizarEntidadesRelacionadas(ordenTrabajo.getCodigo(), ordenTrabajoDTO.getCodigo());
+
+                ordenTrabajo.setCodigo(ordenTrabajoDTO.getCodigo());
+            }
+
+            // Compara los valores antiguos con los nuevos y guarda el historial de modificaciones si hay cambios
+            if (!ordenTrabajo.getDescripcion().equals(ordenTrabajoDTO.getDescripcion())) {
+                registrarHistorial(ordenTrabajo, "descripcion", ordenTrabajo.getDescripcion(), ordenTrabajoDTO.getDescripcion());
+                ordenTrabajo.setDescripcion(ordenTrabajoDTO.getDescripcion());
+            }
+
+            if (!ordenTrabajo.getFecha().equals(ordenTrabajoDTO.getFecha())) {
+                registrarHistorial(ordenTrabajo, "fecha", ordenTrabajo.getFecha(), ordenTrabajoDTO.getFecha());
+                ordenTrabajo.setFecha(ordenTrabajoDTO.getFecha());
+            }
+
+            if (!ordenTrabajo.getManchas().equals(ordenTrabajoDTO.getManchas())) {
+                registrarHistorial(ordenTrabajo, "manchas", ordenTrabajo.getManchas(), ordenTrabajoDTO.getManchas());
+                ordenTrabajo.setManchas(ordenTrabajoDTO.getManchas());
+            }
+
+            if (!ordenTrabajo.getGolpes().equals(ordenTrabajoDTO.getGolpes())) {
+                registrarHistorial(ordenTrabajo, "golpes", ordenTrabajo.getGolpes(), ordenTrabajoDTO.getGolpes());
+                ordenTrabajo.setGolpes(ordenTrabajoDTO.getGolpes());
+            }
+
+            if (!ordenTrabajo.getModelo().equals(ordenTrabajoDTO.getModelo())) {
+                registrarHistorial(ordenTrabajo, "modelo", ordenTrabajo.getModelo(), ordenTrabajoDTO.getModelo());
+                ordenTrabajo.setModelo(ordenTrabajoDTO.getModelo());
+            }
+
+            if (!ordenTrabajo.getRajaduras().equals(ordenTrabajoDTO.getRajaduras())) {
+                registrarHistorial(ordenTrabajo, "rajaduras", ordenTrabajo.getRajaduras(), ordenTrabajoDTO.getRajaduras());
+                ordenTrabajo.setRajaduras(ordenTrabajoDTO.getRajaduras());
+            }
+
+            if (!ordenTrabajo.getMarca().equals(ordenTrabajoDTO.getMarca())) {
+                registrarHistorial(ordenTrabajo, "marca", ordenTrabajo.getMarca(), ordenTrabajoDTO.getMarca());
+                ordenTrabajo.setMarca(ordenTrabajoDTO.getMarca());
+            }
+
+            // Actualizar el cliente
+            ordenTrabajo.setCliente(clienteRepository.findById(ordenTrabajoDTO.getClienteId())
+                    .orElseThrow(() -> new RuntimeException("Cliente no encontrado")));
+
+            // Guardar la orden de trabajo con los nuevos valores
+            ordenTrabajoRepository.save(ordenTrabajo);
+
+        } catch (DataIntegrityViolationException e) {
+            // Captura el error de clave duplicada
+            throw new RuntimeException("Error al actualizar la orden de trabajo: El código ya está en uso.....", e);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error al procesar la actualización de la orden de trabajo: " + e.getMessage(), e);
         }
 
-        if (!ordenTrabajo.getFecha().equals(ordenTrabajoDTO.getFecha())) {
-            registrarHistorial(ordenTrabajo, "fecha", ordenTrabajo.getFecha(), ordenTrabajoDTO.getFecha());
-            ordenTrabajo.setFecha(ordenTrabajoDTO.getFecha());
-        }
-
-        if (!ordenTrabajo.getCodigo().equals(ordenTrabajoDTO.getCodigo())) {
-            registrarHistorial(ordenTrabajo, "codigo", ordenTrabajo.getCodigo(), ordenTrabajoDTO.getCodigo());
-            ordenTrabajo.setCodigo(ordenTrabajoDTO.getCodigo());
-        }
-
-        if (!ordenTrabajo.getManchas().equals(ordenTrabajoDTO.getManchas())) {
-            registrarHistorial(ordenTrabajo, "manchas", ordenTrabajo.getManchas(), ordenTrabajoDTO.getManchas());
-            ordenTrabajo.setManchas(ordenTrabajoDTO.getManchas());
-        }
-
-        if (!ordenTrabajo.getGolpes().equals(ordenTrabajoDTO.getGolpes())) {
-            registrarHistorial(ordenTrabajo, "golpes", ordenTrabajo.getGolpes(), ordenTrabajoDTO.getGolpes());
-            ordenTrabajo.setGolpes(ordenTrabajoDTO.getGolpes());
-        }
-
-        if (!ordenTrabajo.getModelo().equals(ordenTrabajoDTO.getModelo())) {
-            registrarHistorial(ordenTrabajo, "modelo", ordenTrabajo.getModelo(), ordenTrabajoDTO.getModelo());
-            ordenTrabajo.setModelo(ordenTrabajoDTO.getModelo());
-        }
-
-        if (!ordenTrabajo.getRajaduras().equals(ordenTrabajoDTO.getRajaduras())) {
-            registrarHistorial(ordenTrabajo, "rajaduras", ordenTrabajo.getRajaduras(), ordenTrabajoDTO.getRajaduras());
-            ordenTrabajo.setRajaduras(ordenTrabajoDTO.getRajaduras());
-        }
-
-        if (!ordenTrabajo.getMarca().equals(ordenTrabajoDTO.getMarca())) {
-            registrarHistorial(ordenTrabajo, "marca", ordenTrabajo.getMarca(), ordenTrabajoDTO.getMarca());
-            ordenTrabajo.setMarca(ordenTrabajoDTO.getMarca());
-        }
-
-        // Actualizar el cliente
-        ordenTrabajo.setCliente(clienteRepository.findById(ordenTrabajoDTO.getClienteId())
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado")));
-
-        // Verificar si existe un documento asociado
+        // Verificar si existe un documento asociado y actualizarlo si es necesario
         try {
             Documento documentoExistente = ordenTrabajo.getDocumento();
-
-            // Verificar si el documento existe y tiene una ruta válida
             if (documentoExistente == null || documentoExistente.getRutaArchivo() == null) {
                 throw new RuntimeException("No se encuentra el documento asociado a la orden de trabajo.");
             }
 
             // Solo procesar el archivo si se proporciona uno nuevo
             if (file != null) {
-                // Registrar el cambio de archivo en el historial (registrar la URL antigua y la nueva)
                 String urlAnterior = documentoExistente.getRutaArchivo();
                 String nombreArchivoNuevo = file.getName();
 
                 // Subir el nuevo archivo a Google Drive y obtener la nueva URL
-                String nuevaUrl = driveService.uploadPdfToDrive(file,"remision");  // Subir el archivo
+                String nuevaUrl = driveService.uploadPdfToDrive(file, "remision");
 
                 // Registrar en el historial la URL anterior y la nueva
                 registrarHistorial(ordenTrabajo, "documento", urlAnterior, nuevaUrl);
 
                 // Actualizar la ruta del archivo en el documento
-                documentoExistente.setRutaArchivo(nuevaUrl);  // Actualizar la URL del archivo
+                documentoExistente.setRutaArchivo(nuevaUrl);
                 documentoExistente.setFechaSubida(LocalDateTime.now());
                 documentoExistente.setNombre(nombreArchivoNuevo);
             }
@@ -240,10 +288,10 @@ public class OrdenTrabajoService {
             ordenTrabajoRepository.save(ordenTrabajo);
 
         } catch (RuntimeException e) {
-            // Si el documento no existe o tiene problemas, se lanza una excepción personalizada
             throw new RuntimeException("Error al procesar el documento de la orden de trabajo: " + e.getMessage(), e);
         }
     }
+
 
     private void registrarHistorial(OrdenTrabajo ordenTrabajo, String campo, Object valorAnterior, Object valorNuevo) {
         // Considerar como vacío cualquier valor no significativo
