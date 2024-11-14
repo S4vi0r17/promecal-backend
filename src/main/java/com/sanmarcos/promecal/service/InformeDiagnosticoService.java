@@ -22,6 +22,8 @@ public class InformeDiagnosticoService {
     private OrdenTrabajoRepository ordenTrabajoRepository;
     @Autowired
     private DriveService driveService;
+    @Autowired
+    private EmailService emailService;
 
     public void insertarInformeDiagnostico(InformeDiagnosticoDTO informeDiagnosticoDTO, File file) throws IOException {
         //Crear el Informe Diagnostico
@@ -44,8 +46,9 @@ public class InformeDiagnosticoService {
         File pdfcreado= generarPDF(informeDiagnostico);
 
         informeDiagnosticoRepository.save(informeDiagnostico);
-        EmailService emailService = new EmailService();
-        emailService.enviarCorreo("Jefferson.asencios@unmsm.edu.pe",driveService.uploadPdfToDrive(pdfcreado,"informe"));
+        String name=driveService.uploadPdfToDrive(pdfcreado,"informe");
+        System.out.println(name);
+        emailService.enviarCorreo("Jefferson.asencios@unmsm.edu.pe",name);
         ;
     }
 
@@ -68,8 +71,6 @@ public class InformeDiagnosticoService {
             // Agregar título al PDF
             document.add(new Paragraph("Informe Diagnóstico").setBold().setFontSize(16));
 
-            // Agregar los datos del informe
-            document.add(new Paragraph("ID: " + informeDiagnostico.getId()));
             document.add(new Paragraph("Fecha: " + informeDiagnostico.getFecha()));
             document.add(new Paragraph("Estado Actual: " + informeDiagnostico.getEstadoActual()));
             document.add(new Paragraph("Número de Serie: " + informeDiagnostico.getNumeroSerie()));

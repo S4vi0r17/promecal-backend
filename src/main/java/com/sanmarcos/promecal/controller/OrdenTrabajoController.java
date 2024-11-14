@@ -23,11 +23,11 @@ public class OrdenTrabajoController {
     public List<OrdenTrabajoListaDTO> obtenerOrdenesTrabajo(
             @RequestParam(required = false) LocalDateTime fechaInicio,
             @RequestParam(required = false) LocalDateTime fechaFin,
-            @RequestParam(required = false) Long clienteId,
-            @RequestParam(required = false) String tipoEquipo,
-            @RequestParam(required = false) String numeroOrden) {
+            @RequestParam(required = false) String dni,
+            @RequestParam(required = false) String modelo,
+            @RequestParam(required = false) String codigo) {
 
-        return ordenTrabajoService.obtenerOrdenesTrabajoConFiltros(fechaInicio, fechaFin, clienteId, tipoEquipo, numeroOrden);
+        return ordenTrabajoService.obtenerOrdenesTrabajoConFiltros(fechaInicio, fechaFin, dni, modelo, codigo);
     }
 
     //Endpoint para guardar una orden de trabajo

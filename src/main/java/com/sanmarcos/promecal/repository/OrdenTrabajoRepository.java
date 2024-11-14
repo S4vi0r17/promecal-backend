@@ -15,6 +15,8 @@ public interface OrdenTrabajoRepository extends JpaRepository<OrdenTrabajo, Long
     // Método para buscar por 'codigo' y devolver Optional
     Optional<OrdenTrabajo> findByCodigo(String codigo);
 
+    boolean existsByCodigoAndIdNot(String codigo, Long id);
+
     // Método para encontrar todas las órdenes de trabajo por cliente
     List<OrdenTrabajo> findByCliente(Cliente cliente);
 }

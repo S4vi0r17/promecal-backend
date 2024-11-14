@@ -43,7 +43,4 @@ public class InformeDiagnostico {
 
     @Column(name = "equipoirreparable")
     private Boolean equipoIrreparable;
-
-    public void setOrdenTrabajo(OrdenTrabajo ordenTrabajoNoEncontrado) {
-    }
 }
