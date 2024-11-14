@@ -6,13 +6,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface OrdenTrabajoRepository extends JpaRepository<OrdenTrabajo, Long> , JpaSpecificationExecutor<OrdenTrabajo> {
-    // Metodo para verificar si existe una OrdenTrabajo con el código dado
+public interface OrdenTrabajoRepository extends JpaRepository<OrdenTrabajo, Long>, JpaSpecificationExecutor<OrdenTrabajo> {
+    // Método para verificar si existe una OrdenTrabajo con el código dado
     boolean existsByCodigo(String codigo);
-    // Metodo para buscar por 'codigo'
-    OrdenTrabajo findByCodigo(String codigo);
 
-    // Metodo para encontrar todas las ordenes de trabajo por cliente
+    // Método para buscar por 'codigo' y devolver Optional
+    Optional<OrdenTrabajo> findByCodigo(String codigo);
+
+    // Método para encontrar todas las órdenes de trabajo por cliente
     List<OrdenTrabajo> findByCliente(Cliente cliente);
 }

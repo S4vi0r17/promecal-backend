@@ -2,35 +2,39 @@ package com.sanmarcos.promecal.model.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.time.LocalDateTime;
 
 @Entity
-@Data
-@Table(name = "ordenes_trabajo")
+@Data // Lombok: Genera automáticamente getters, setters, toString, etc.
+@Table(name = "ordenes_trabajo", uniqueConstraints = {@UniqueConstraint(columnNames = {"codigo"})})
 public class OrdenTrabajo {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cliente", referencedColumnName = "id")
+    @JoinColumn(name = "cliente", referencedColumnName = "id", nullable = false)
     private Cliente cliente;
 
-    @Column(name = "codigo")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "documento_id", referencedColumnName = "id")
+    private Documento documento;
+
+    @Column(name = "codigo", unique = true, nullable = false, length = 15)
     private String codigo;
 
-    @Column(name = "fecha")
+    @Column(name = "fecha", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime fecha;
 
-    @Column(name = "descripcion")
+    @Column(name = "descripcion", length = 50)
     private String descripcion;
 
-    @Column(name = "modelo")
+    @Column(name = "modelo", length = 10)
     private String modelo;
 
-    @Column(name = "marca")
+    @Column(name = "marca", length = 10)
     private String marca;
 
     @Column(name = "rajaduras")
@@ -42,8 +46,6 @@ public class OrdenTrabajo {
     @Column(name = "golpes")
     private Boolean golpes;
 
-    @Column(name = "estado")
-    private Boolean estado;
-
-
+    @Column(name = "estado", nullable = false)
+    private Boolean estado = true;
 }

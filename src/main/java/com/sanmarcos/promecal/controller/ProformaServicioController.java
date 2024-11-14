@@ -61,7 +61,7 @@ public class ProformaServicioController {
     }
     //Buscar proformas de Servicio por Cliente(dni)
     @GetMapping("/cliente/{dni}")
-    public List<ProformaServicioListaDTO> obtenerProformaServicioPorCliente(@PathVariable Long dni) {
+    public List<ProformaServicioListaDTO> obtenerProformaServicioPorCliente(@PathVariable String dni) {
         return proformaServicioService.obtenerProformaServicioPorCliente(dni);
     }
     //Endpoint para registrar pago
