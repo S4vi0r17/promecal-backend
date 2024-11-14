@@ -3,8 +3,6 @@ package com.sanmarcos.promecal.service;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.sanmarcos.promecal.model.dto.InformeDiagnosticoDTO;
-import com.itextpdf.*;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import com.sanmarcos.promecal.model.entity.InformeDiagnostico;
 import com.sanmarcos.promecal.repository.InformeDiagnosticoRepository;
