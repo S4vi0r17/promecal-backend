@@ -2,23 +2,20 @@ package com.sanmarcos.promecal.model.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Data // Lombok: Genera automáticamente getters, setters, toString, etc.
 @Table(name = "informes_diagnostico")
 public class InformeDiagnostico {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ordentrabajo", referencedColumnName = "id")
-    private OrdenTrabajo ordenTrabajo;
+    @Column(name = "codigo_orden_trabajo", unique = true, length = 15, nullable = false)
+    private String codigoOrdenTrabajo;
 
     @Column(name = "fecha")
     private LocalDateTime fecha;
@@ -47,4 +44,6 @@ public class InformeDiagnostico {
     @Column(name = "equipoirreparable")
     private Boolean equipoIrreparable;
 
+    public void setOrdenTrabajo(OrdenTrabajo ordenTrabajoNoEncontrado) {
+    }
 }

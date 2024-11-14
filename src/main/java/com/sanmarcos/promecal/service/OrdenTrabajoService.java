@@ -9,6 +9,7 @@ import com.sanmarcos.promecal.model.entity.Documento;
 import com.sanmarcos.promecal.model.entity.OrdenTrabajo;
 import com.sanmarcos.promecal.model.entity.OrdenTrabajoHistorial;
 import com.sanmarcos.promecal.repository.ClienteRepository;
+import com.sanmarcos.promecal.repository.DocumentoRepository;
 import com.sanmarcos.promecal.repository.OrdenTrabajoHistorialRepository;
 import com.sanmarcos.promecal.repository.OrdenTrabajoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ public class OrdenTrabajoService {
     DriveService driveService;
     @Autowired
     ClienteRepository clienteRepository;
+    @Autowired
+    DocumentoRepository documentoRepository;
 
     //Obtener ordenes de trabajo
     public List<OrdenTrabajoListaDTO> obtenerOrdenesTrabajoConFiltros(
@@ -99,18 +102,17 @@ public class OrdenTrabajoService {
         // Buscar cliente asociado
         Cliente cliente= clienteRepository.findById(ordenTrabajoDTO.getClienteId()).orElseThrow(()-> new RuntimeException("Cliente no encontrado"));
         ordenTrabajo.setCliente(cliente);
-        //Crear documento
-        Documento documento= new Documento();
-        documento.setRutaArchivo(driveService.uploadPdfToDrive(file,"remision"));
-        documento.setOrdenTrabajo(ordenTrabajo);
-        documento.setFechaSubida(LocalDateTime.now());
-        documento.setNombre(file.getName());
-        ordenTrabajo.set
-        ordenTrabajo.setDocumento(documento);
         //Setear por defecto
         ordenTrabajo.setEstado(true);
-        ordenTrabajo.setInformeDiagnostico(null);
-        ordenTrabajo.setProformasServicio(null);
+        // Crear y guardar documento
+        Documento documento = new Documento();
+        documento.setRutaArchivo(driveService.uploadPdfToDrive(file, "remision"));
+        documento.setFechaSubida(LocalDateTime.now());
+        documento.setNombre(file.getName());
+        documentoRepository.save(documento); // Asegúrate de que Documento esté guardado
+        // Asociar el documento a la orden de trabajo
+        ordenTrabajo.setDocumento(documento);
+        // Guardar la orden de trabajo
         ordenTrabajoRepository.save(ordenTrabajo);
     }
     // Eliminar OrdenTrabajo
@@ -151,7 +153,7 @@ public class OrdenTrabajoService {
         ordenTrabajoVistaDTO.setRajaduras(ordenTrabajo.getRajaduras());
         //Cliente
         ordenTrabajoVistaDTO.setDni(ordenTrabajo.getCliente().getDni());
-        ordenTrabajoVistaDTO.setNombrecompleto(ordenTrabajo.getCliente().getNombrecompleto());
+        ordenTrabajoVistaDTO.setNombrecompleto(ordenTrabajo.getCliente().getNombreCompleto());
         //Documento
         ordenTrabajoVistaDTO.setDocumentourl(ordenTrabajo.getDocumento().getRutaArchivo());
         return ordenTrabajoVistaDTO;

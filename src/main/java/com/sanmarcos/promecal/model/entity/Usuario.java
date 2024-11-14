@@ -10,32 +10,38 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Data
+@Data // Lombok: Genera automáticamente getters, setters, toString, etc.
 @Table(name = "usuarios")
 public class Usuario implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "nombreusuario", nullable = false, unique = true)
+
+    @Column(name = "nombreusuario", nullable = false, unique = true, length = 20)
     private String nombreusuario;
-    @Column(name = "nombrecompleto")
+
+    @Column(name = "nombrecompleto", length = 50, nullable = false)
     private String nombrecompleto;
-    @Column(name = "correoelectronico")
+
+    @Column(name = "correoelectronico", length = 30, nullable = false)
     private String correoelectronico;
-    @Column(name = "contrasena")
+
+    @Column(name = "contrasena", nullable = false, length = 100)
     private String contrasena;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "rol")
+    @Column(name = "rol", length = 30, nullable = false)
     private Rol rol;
 
+    // Métodos de UserDetails para Spring Security
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Agregamos ROLE_ al nombre del rol para cumplir con la convención de Spring Security
-        return List.of(new SimpleGrantedAuthority(rol.name()));
+        // ROLE_ se agrega al rol para seguir la convención de Spring Security
+        return List.of(new SimpleGrantedAuthority("ROLE_" + rol.name()));
     }
-    // Métodos obligatorios de UserDetails en inglés
+
     @Override
     public String getUsername() {
         return nombreusuario;
@@ -48,21 +54,21 @@ public class Usuario implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return true; // Cambiar si se necesita lógica específica
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return true; // Cambiar si se necesita lógica específica
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return true; // Cambiar si se necesita lógica específica
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return true; // Cambiar si se necesita lógica específica
     }
 }

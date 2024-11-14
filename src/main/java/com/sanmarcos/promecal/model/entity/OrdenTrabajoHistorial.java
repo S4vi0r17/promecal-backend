@@ -2,11 +2,10 @@ package com.sanmarcos.promecal.model.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Data // Lombok: Genera automáticamente getters, setters, toString, etc.
 @Table(name = "orden_trabajo_historial")
 public class OrdenTrabajoHistorial {
 
@@ -16,18 +15,18 @@ public class OrdenTrabajoHistorial {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "orden_trabajo_id", referencedColumnName = "id")
+    @JoinColumn(name = "orden_trabajo_id", referencedColumnName = "id", nullable = false)
     private OrdenTrabajo ordenTrabajo;
 
-    @Column(name = "fecha_modificacion")
+    @Column(name = "fecha_modificacion", nullable = false)
     private LocalDateTime fechaModificacion;
 
-    @Column(name = "campo_modificado")
+    @Column(name = "campo_modificado", length = 255)
     private String campoModificado;
 
-    @Column(name = "valor_anterior")
+    @Column(name = "valor_anterior", length = 255)
     private String valorAnterior;
 
-    @Column(name = "valor_nuevo")
+    @Column(name = "valor_nuevo", length = 255)
     private String valorNuevo;
 }

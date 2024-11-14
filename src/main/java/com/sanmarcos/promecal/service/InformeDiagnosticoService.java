@@ -32,7 +32,7 @@ public class InformeDiagnosticoService {
         informeDiagnostico.setFactibilidadReparacion(informeDiagnosticoDTO.getFactibilidadReparacion());
         informeDiagnostico.setRecomendaciones(informeDiagnosticoDTO.getRecomendaciones());
         informeDiagnostico.setDiagnosticoTecnico(informeDiagnosticoDTO.getDiagnosticoTecnico());
-        informeDiagnostico.setOrdenTrabajo(ordenTrabajoRepository.findById(informeDiagnosticoDTO.getId_ordenTrabajo()).orElseThrow(()-> new RuntimeException("Orden Trabajo no encontrado")));
+        informeDiagnostico.setCodigoOrdenTrabajo(ordenTrabajoRepository.findById(informeDiagnosticoDTO.getId_ordenTrabajo()).orElseThrow(()-> new RuntimeException("Orden Trabajo no encontrado")).getCodigo());
         informeDiagnostico.setEquipoIrreparable(informeDiagnosticoDTO.getEquipoirreparable());
         //Subir el archivo si hay
         if(file==null){

@@ -1,6 +1,5 @@
 package com.sanmarcos.promecal.service;
 
-import com.sanmarcos.promecal.model.dto.ClienteDTO;
 import com.sanmarcos.promecal.model.dto.ProformaServicioDTO;
 import com.sanmarcos.promecal.model.dto.ProformaServicioListaDTO;
 import com.sanmarcos.promecal.model.entity.Cliente;
@@ -15,19 +14,29 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class ProformaServicioService {
+
+    private final ProformaServicioRepository proformaServicioRepository;
+    private final OrdenTrabajoRepository ordenTrabajoRepository;
+    private final ClienteRepository clienteRepository;
+    private final DriveService driveService;
+
     @Autowired
-    private ProformaServicioRepository proformaServicioRepository;
-    @Autowired
-    private OrdenTrabajoRepository ordenTrabajoRepository;
-    @Autowired
-    private ClienteRepository clienteRepository;
-    @Autowired
-    private DriveService driveService;
-    // Obtener todos las proformas de servicio
+    public ProformaServicioService(ProformaServicioRepository proformaServicioRepository,
+                                   OrdenTrabajoRepository ordenTrabajoRepository,
+                                   ClienteRepository clienteRepository,
+                                   DriveService driveService) {
+        this.proformaServicioRepository = proformaServicioRepository;
+        this.ordenTrabajoRepository = ordenTrabajoRepository;
+        this.clienteRepository = clienteRepository;
+        this.driveService = driveService;
+    }
+
+    // Obtener todas las proformas de servicio
     public List<ProformaServicioListaDTO> obtenerTodosLasProformas() {
         return proformaServicioRepository.findAll().stream().map(proformaServicio -> {
             ProformaServicioListaDTO proformaServicioListaDTO = new ProformaServicioListaDTO();
@@ -37,27 +46,34 @@ public class ProformaServicioService {
             proformaServicioListaDTO.setPrecioServicio(proformaServicio.getPrecioServicio());
             proformaServicioListaDTO.setEstadoPago(proformaServicio.getEstadoPago());
             proformaServicioListaDTO.setCondicionesContratacion(proformaServicio.getCondicionesContratacion());
-            proformaServicioListaDTO.setCodigo_ordentrabajo(ordenTrabajoRepository.findById(proformaServicio.getOrdenTrabajo().getId()).get().getCodigo());
+            proformaServicioListaDTO.setCodigo_ordentrabajo(proformaServicio.getOrdenTrabajo().getCodigo());
             proformaServicioListaDTO.setTiempoEstimadoEntrega(proformaServicio.getTiempoEstimadoEntrega());
             return proformaServicioListaDTO;
         }).collect(Collectors.toList());
     }
 
+    // Insertar una nueva proforma de servicio
     public void insertarProformaServicio(ProformaServicioDTO proformaServicioDTO) {
         ProformaServicio proformaServicio = new ProformaServicio();
         proformaServicio.setFecha(proformaServicioDTO.getFecha());
-        proformaServicio.setPrecioServicio(proformaServicioDTO.getPrecioServicio());
+        proformaServicio.setPrecioServicio(proformaServicioDTO.getPrecioServicio()); // Asegúrate de que sea `Double`
         proformaServicio.setEstadoPago(proformaServicioDTO.getEstadoPago());
         proformaServicio.setDetalleServicio(proformaServicioDTO.getDetalleServicio());
         proformaServicio.setCondicionesContratacion(proformaServicioDTO.getCondicionesContratacion());
         proformaServicio.setTiempoEstimadoEntrega(proformaServicioDTO.getTiempoEstimadoEntrega());
-        proformaServicio.setOrdenTrabajo(ordenTrabajoRepository.findByCodigo(proformaServicioDTO.getCodigo_ordentrabajo()));
+
+        OrdenTrabajo ordenTrabajo = ordenTrabajoRepository.findByCodigo(proformaServicioDTO.getCodigo_ordentrabajo())
+                .orElseThrow(() -> new RuntimeException("Orden de Trabajo no encontrada"));
+        proformaServicio.setOrdenTrabajo(ordenTrabajo);
+
         proformaServicio.setBoletaUrl(null);
         proformaServicioRepository.save(proformaServicio);
     }
 
+    // Obtener proforma de servicio por ID
     public ProformaServicioDTO obtenerProformaServicioPorId(Long id) {
-        ProformaServicio proformaServicio = proformaServicioRepository.findById(id).orElseThrow(()-> new RuntimeException("Proforma de Servicio no encontrado"));
+        ProformaServicio proformaServicio = proformaServicioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Proforma de Servicio no encontrada"));
         ProformaServicioDTO proformaServicioDTO = new ProformaServicioDTO();
         proformaServicioDTO.setDetalleServicio(proformaServicio.getDetalleServicio());
         proformaServicioDTO.setPrecioServicio(proformaServicio.getPrecioServicio());
@@ -66,12 +82,13 @@ public class ProformaServicioService {
         proformaServicioDTO.setCondicionesContratacion(proformaServicio.getCondicionesContratacion());
         proformaServicioDTO.setTiempoEstimadoEntrega(proformaServicio.getTiempoEstimadoEntrega());
         proformaServicioDTO.setCodigo_ordentrabajo(proformaServicio.getOrdenTrabajo().getCodigo());
-        return  proformaServicioDTO;
+        return proformaServicioDTO;
     }
 
-    //Metodo para actualizar una proforma de servicio
+    // Método para actualizar una proforma de servicio
     public void actualizarProformaServicio(Long id, ProformaServicioDTO proformaServicioDTO) throws IOException {
-        ProformaServicio proformaServicio = proformaServicioRepository.findById(id).orElseThrow(()-> new RuntimeException("Proforma de Servicio no encontrado"));
+        ProformaServicio proformaServicio = proformaServicioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Proforma de Servicio no encontrada"));
         proformaServicio.setFecha(proformaServicioDTO.getFecha());
         proformaServicio.setPrecioServicio(proformaServicioDTO.getPrecioServicio());
         proformaServicio.setEstadoPago(proformaServicioDTO.getEstadoPago());
@@ -79,38 +96,41 @@ public class ProformaServicioService {
         proformaServicio.setTiempoEstimadoEntrega(proformaServicioDTO.getTiempoEstimadoEntrega());
         proformaServicio.setCondicionesContratacion(proformaServicioDTO.getCondicionesContratacion());
         proformaServicio.setBoletaUrl(null);
-        proformaServicio.setOrdenTrabajo(ordenTrabajoRepository.findByCodigo(proformaServicioDTO.getCodigo_ordentrabajo()));
+
+        OrdenTrabajo ordenTrabajo = ordenTrabajoRepository.findByCodigo(proformaServicioDTO.getCodigo_ordentrabajo())
+                .orElseThrow(() -> new RuntimeException("Orden de Trabajo no encontrada"));
+        proformaServicio.setOrdenTrabajo(ordenTrabajo);
+
         proformaServicioRepository.save(proformaServicio);
     }
 
+    // Eliminar una proforma de servicio
     public void eliminarProformaServicio(Long id) {
-        ProformaServicio proformaServicio = proformaServicioRepository.findById(id).orElseThrow(()-> new RuntimeException("Proforma de Servicio no Encontrada"));
+        ProformaServicio proformaServicio = proformaServicioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Proforma de Servicio no encontrada"));
         proformaServicioRepository.delete(proformaServicio);
     }
 
-    public List<ProformaServicioListaDTO> obtenerProformaServicioPorCliente(Long dni) {
-        // Buscar al cliente por su DNI
+    // Obtener proformas de servicio por cliente
+    public List<ProformaServicioListaDTO> obtenerProformaServicioPorCliente(String dni) {
         Cliente cliente = clienteRepository.findByDni(dni)
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
-        // Obtener todas las ordenes de trabajo asociadas a ese cliente
         List<OrdenTrabajo> ordenesDeTrabajo = ordenTrabajoRepository.findByCliente(cliente);
 
-        // Obtener las proformas de servicio asociadas a esas ordenes de trabajo
         return ordenesDeTrabajo.stream()
                 .map(ordenTrabajo -> {
-                    ProformaServicio proformaServicio = ordenTrabajo.ge; //
+                    ProformaServicio proformaServicio = proformaServicioRepository.findByOrdenTrabajo(ordenTrabajo);
                     ProformaServicioListaDTO proformaServicioListaDTO = new ProformaServicioListaDTO();
 
-                    // Mapear los campos de ProformaServicio al DTO
-                    if (proformaServicio != null) { // Verificar si hay una Proforma asociada
+                    if (proformaServicio != null) {
                         proformaServicioListaDTO.setDetalleServicio(proformaServicio.getDetalleServicio());
                         proformaServicioListaDTO.setId(proformaServicio.getId());
                         proformaServicioListaDTO.setFecha(proformaServicio.getFecha());
                         proformaServicioListaDTO.setPrecioServicio(proformaServicio.getPrecioServicio());
                         proformaServicioListaDTO.setEstadoPago(proformaServicio.getEstadoPago());
                         proformaServicioListaDTO.setCondicionesContratacion(proformaServicio.getCondicionesContratacion());
-                        proformaServicioListaDTO.setCodigo_ordentrabajo(ordenTrabajoRepository.findById(proformaServicio.getOrdenTrabajo().getId()).get().getCodigo());
+                        proformaServicioListaDTO.setCodigo_ordentrabajo(proformaServicio.getOrdenTrabajo().getCodigo());
                         proformaServicioListaDTO.setTiempoEstimadoEntrega(proformaServicio.getTiempoEstimadoEntrega());
                     }
                     return proformaServicioListaDTO;
@@ -119,9 +139,15 @@ public class ProformaServicioService {
                 .collect(Collectors.toList());
     }
 
+    // Registrar el pago de una proforma
     public void registrarPago(Long id, File tempFile) {
-        ProformaServicio proformaServicio = proformaServicioRepository.findById(id).orElseThrow(()-> new RuntimeException("Proforma de Servicio no encontrado"));
+        ProformaServicio proformaServicio = proformaServicioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Proforma de Servicio no encontrada"));
         proformaServicio.setEstadoPago("PAGADO");
-        proformaServicio.setBoletaurl(driveService.uploadPdfToDrive(tempFile,"proforma"));
+
+        String boletaUrl = driveService.uploadPdfToDrive(tempFile, "proforma");
+        proformaServicio.setBoletaUrl(boletaUrl);
+
+        proformaServicioRepository.save(proformaServicio);
     }
 }
