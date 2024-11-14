@@ -2,6 +2,7 @@ package com.sanmarcos.promecal.service;
 
 import com.sanmarcos.promecal.model.dto.UsuarioDTO;
 import com.sanmarcos.promecal.model.dto.UsuarioListaDTO;
+import com.sanmarcos.promecal.model.dto.UsuarioVistaDTO;
 import com.sanmarcos.promecal.model.entity.Usuario;
 import com.sanmarcos.promecal.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,7 @@ public class UsuarioService {
     private PasswordEncoder passwordEncoder;
 
     // Crear un nuevo usuario
-    public Usuario insertarUsuario(UsuarioDTO usuariodto) {
-
+    public void insertarUsuario(UsuarioDTO usuariodto) {
         Usuario usuario = new Usuario();
         usuario.setNombreusuario(usuariodto.getNombreusuario());
         usuario.setContrasena(passwordEncoder.encode(usuariodto.getContrasena()));
@@ -29,7 +29,6 @@ public class UsuarioService {
         usuario.setNombrecompleto(usuariodto.getNombrecompleto());
         usuario.setRol(usuariodto.getRol());
         usuarioRepository.save(usuario);
-        return usuario;
     }
 
     // Obtener todos los usuarios
@@ -46,23 +45,23 @@ public class UsuarioService {
     }
 
     // Obtener un usuario por ID
-    public UsuarioDTO obtenerUsuarioPorId(Long id) {
+    public UsuarioVistaDTO obtenerUsuarioPorId(Long id) {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        UsuarioDTO usuarioDTO = new UsuarioDTO();
-        usuarioDTO.setNombreusuario(usuario.getNombreusuario());
-        usuarioDTO.setNombrecompleto(usuario.getNombrecompleto());
-        usuarioDTO.setCorreoelectronico(usuario.getCorreoelectronico());
-        usuarioDTO.setRol(usuario.getRol());
-        return usuarioDTO;
+        UsuarioVistaDTO usuarioVistaDTO= new UsuarioVistaDTO();
+        usuarioVistaDTO.setNombrecompleto(usuario.getNombrecompleto());
+        usuarioVistaDTO.setCorreoelectronico(usuario.getCorreoelectronico());
+        usuarioVistaDTO.setRol(usuario.getRol());
+        usuarioVistaDTO.setNombreusuario(usuario.getNombreusuario());
+        return usuarioVistaDTO;
     }
 
-    //Metodo para actualizar un evento
-    public void actualizarUsuario(Long id, UsuarioDTO usuarioDTO) throws IOException {
+    //Metodo para actualizar un usuario
+    public void actualizarUsuario(Long id, UsuarioVistaDTO usuarioVistaDTO) throws IOException {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        usuario.setNombreusuario(usuarioDTO.getNombreusuario());
-        usuario.setCorreoelectronico(usuarioDTO.getCorreoelectronico());
-        usuario.setNombrecompleto(usuarioDTO.getNombrecompleto());
-        usuario.setRol(usuarioDTO.getRol());
+        usuario.setNombreusuario(usuarioVistaDTO.getNombreusuario());
+        usuario.setCorreoelectronico(usuarioVistaDTO.getCorreoelectronico());
+        usuario.setNombrecompleto(usuarioVistaDTO.getNombrecompleto());
+        usuario.setRol(usuarioVistaDTO.getRol());
         usuarioRepository.save(usuario);
     }
 

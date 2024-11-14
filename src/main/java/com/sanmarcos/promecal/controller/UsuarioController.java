@@ -2,14 +2,13 @@ package com.sanmarcos.promecal.controller;
 
 import com.sanmarcos.promecal.model.dto.UsuarioDTO;
 import com.sanmarcos.promecal.model.dto.UsuarioListaDTO;
+import com.sanmarcos.promecal.model.dto.UsuarioVistaDTO;
 import com.sanmarcos.promecal.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -37,20 +36,20 @@ public class UsuarioController {
 
     //Endpoint para obtener los detalles un usuario por id
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioDTO> obtenerDetallesUsuario(@PathVariable Long id) {
+    public ResponseEntity<UsuarioVistaDTO> obtenerDetallesUsuario(@PathVariable Long id) {
         try {
-            UsuarioDTO usuarioDTO = usuarioService.obtenerUsuarioPorId(id);
-            return new ResponseEntity<>(usuarioDTO, HttpStatus.OK);
+            UsuarioVistaDTO usuarioVistaDTO=usuarioService.obtenerUsuarioPorId(id);
+            return new ResponseEntity<>(usuarioVistaDTO, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 
-    // Endpoint paraActualizar un usuario
+    // Endpoint para actualizar un usuario
     @PutMapping("/{id}")
-    public ResponseEntity<String> actualizarUsuario(@PathVariable Long id, @RequestBody UsuarioDTO usuariodto) {
+    public ResponseEntity<String> actualizarUsuario(@PathVariable Long id, @RequestBody UsuarioVistaDTO usuarioVistaDTO) {
         try {
-            usuarioService.actualizarUsuario(id, usuariodto);
+            usuarioService.actualizarUsuario(id, usuarioVistaDTO);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar el usuario" + e.getMessage());

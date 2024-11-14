@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "promecalcloud",
+  "private_key_id": "2a0c7f4a43cca09623b08153e7206a32d0f35ca2",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCoqBaMu1JIDHnR\nKNjmlytUPJoV9g4kgIMWx1N1q8vmZ4dJQ5uwA46/TnPtZ8UMixB4FUw6bGmJhuNb\nPlJllrA77S7py8Bw72R2rp72lk1edZ6WvqvtpkA0iodxym3sT+V7EcnLq93X5au/\nQ1cgCHLIGJmm7rEU+tk6woulaWnkbVwOjReOfMwZ1vwPbHeoqLbgNS6+EBgM6ZPL\nft+xuKNGve7uBMlQMfi9upgUAFerPcdkQIMRou5JwQN8VVq1Dokr9RPYV5AtGWK6\n7nF4qJnjG1V7yglBZMcJYiUKiuaVJYJSeAnTDA2niVzNInaSTzn6MVPukoxbYPVi\nyUWJgPWDAgMBAAECggEAD0enP1nLQxbKRI5YVE/Wz5tr9FhmAJ2aAsrNP2hwoS+4\n/ITBCqnP2Xowm44etpu0wsRfMx3WU+ziFUaorWaBEfTTnr/kb/boWa5JXZrRaKDs\nXMjqh63bvEberYsC+Xlll4hNiYPJJgG7VSkzMAZD6+f6p7qRVY7CdoXgo/xQaS7v\naPU0tELamjk06ptaUu4d6nsJZN3zgdc4Tfq5KxrPNJEthgqU1JaB6FM3jtEO1gsl\nyy4aVez87M/WAAsNpWaef9j1A8vqZKe2VHQDNcqow+uVK3/JuGZxNSV9wf5hOAP6\nCmKM8uZX1rT2UwQ92vi8VgCKIWjHxyJhkzsIkYgGlQKBgQDkopMl9XXbyh964yL8\nJcq3AcR2VbKdEa9ghBQR9wdbrUgV2ta9itn2v/6YRk5pbyFuB99jPAvw79U21m5w\nCqDG7N1HnMTW9omnzocw3d+U/cJf5eyx4RDD//ucRAIvaYQs2GLTcna4FlB4dioA\nJj5YusawgcJAuPDXUWl5jsTAdwKBgQC818LFJZUC2QyAVxxoa5ZTfN8PHiBegylg\n/qL0oIsx8GiK9hJ6nUDKRW45MGzaPwsWlPkr59BXD/HX/iLcav51rJvjkagk07xK\nfe0Imwyv2LibmWbkjQK75E/3oHp6Zzq3RPtZoGdXSi0OKbe60O5wS7A4tza7AZv1\nCdMCxtziVQKBgQC9j/GS2lYSmh3JpIMALlFJtKRwPJNv2RbgXgHJ91fZce0/eYbr\n9jDLfdoX5Mrkbeh4svxK6aE47ZCI+/bq3FT7Oa4pztgBJr1xLTI3mO3kORUsr5S0\n0tc0uouhv11UdBbLm8ksaU33SUEE72vZXdv5czqDY8JsKSo+S9i4mV+V9wKBgQCO\nr/y0GByKpVPj2W5WnAxfEvg8JQhSQYrPhje83V2vozZq4Vm/GfjtnR6WybdGBOKs\n8m1/tk3equaSzKysnY+dfInhnppNEUuxgYrLuNQSPo/myjdLtBx/uhiOQ8ynlj5w\nYggFhcTv2NVIYU85MksnwJjrkcwh6ypbMUwmSfp2bQKBgQDUYCWaboQfc9dVH1w/\n1eF2bsjBmoPsYWB/oYWN0YORhHTJ9pl1Uudw6c+s0XRfzAmnV+QGrPVWJQ21GRHL\nKbeD61PWdseLxomjzxtfgGrujfSbCp9f53FZLZGuQBKVizgpjQg36RE+tzlW5VHS\nnSIzCfr+qXDyHMSOdnrTUncfgQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "googledriveupload@promecalcloud.iam.gserviceaccount.com",
+  "client_id": "113314179258142217937",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/googledriveupload%40promecalcloud.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

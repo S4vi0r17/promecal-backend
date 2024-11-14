@@ -1,7 +1,5 @@
 package com.sanmarcos.promecal.model.dto;
 
-import com.sanmarcos.promecal.model.entity.Rol;
-import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,10 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioDTO {
-    private String nombreusuario;
+public class ClienteListaDTO {
+    private Long id;
     private String nombrecompleto;
-    private String correoelectronico;
-    private String contrasena;
-    Rol rol;
+    private Long dni;
+    private String direccion;
+    private Long celular;
 }
