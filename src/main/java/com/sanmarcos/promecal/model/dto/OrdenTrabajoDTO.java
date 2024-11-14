@@ -1,16 +1,11 @@
 package com.sanmarcos.promecal.model.dto;
 
-import com.sanmarcos.promecal.model.entity.Cliente;
-import com.sanmarcos.promecal.model.entity.Documento;
-import com.sanmarcos.promecal.model.entity.InformeDiagnostico;
-import com.sanmarcos.promecal.model.entity.ProformaServicio;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 @Data
 @Builder
 @NoArgsConstructor
@@ -19,7 +14,7 @@ public class OrdenTrabajoDTO {
 
     private Long clienteId;
 
-    private Long dni;
+    private String dni;
 
     private String nombrecompleto;
 

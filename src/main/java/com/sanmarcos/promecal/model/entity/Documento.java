@@ -11,18 +11,19 @@ public class Documento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "orden_trabajo", referencedColumnName = "id", unique = true, nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ordentrabajo", referencedColumnName = "id")
     private OrdenTrabajo ordenTrabajo;
 
-    @Column(name = "nombre", length = 255)
+    @Column(name = "nombre")
     private String nombre;
 
-    @Column(name = "ruta_archivo", length = 255)
+    @Column(name = "ruta_archivo")
     private String rutaArchivo;
 
-    @Column(name = "fecha_subida", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "fecha_subida")
     private LocalDateTime fechaSubida;
 }

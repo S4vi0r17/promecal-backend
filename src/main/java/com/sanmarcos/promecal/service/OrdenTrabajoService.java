@@ -67,7 +67,7 @@ public class OrdenTrabajoService {
     private OrdenTrabajoListaDTO convertirAListaDTO(OrdenTrabajo ordenTrabajo) {
         OrdenTrabajoListaDTO ordenTrabajoListaDTO=new OrdenTrabajoListaDTO();
         Cliente cliente = clienteRepository.findById(ordenTrabajo.getCliente().getId()).orElseThrow(()-> new RuntimeException("Cliente no encontrado"));
-        ordenTrabajoListaDTO.setNombrecompleto(cliente.getNombrecompleto());
+        ordenTrabajoListaDTO.setNombrecompleto(cliente.getNombreCompleto());
         ordenTrabajoListaDTO.setDni(cliente.getDni());
         ordenTrabajoListaDTO.setId(ordenTrabajo.getId());
         ordenTrabajoListaDTO.setDescripcion(ordenTrabajo.getDescripcion());
@@ -105,6 +105,7 @@ public class OrdenTrabajoService {
         documento.setOrdenTrabajo(ordenTrabajo);
         documento.setFechaSubida(LocalDateTime.now());
         documento.setNombre(file.getName());
+        ordenTrabajo.set
         ordenTrabajo.setDocumento(documento);
         //Setear por defecto
         ordenTrabajo.setEstado(true);

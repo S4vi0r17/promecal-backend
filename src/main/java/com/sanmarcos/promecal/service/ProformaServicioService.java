@@ -52,7 +52,7 @@ public class ProformaServicioService {
         proformaServicio.setCondicionesContratacion(proformaServicioDTO.getCondicionesContratacion());
         proformaServicio.setTiempoEstimadoEntrega(proformaServicioDTO.getTiempoEstimadoEntrega());
         proformaServicio.setOrdenTrabajo(ordenTrabajoRepository.findByCodigo(proformaServicioDTO.getCodigo_ordentrabajo()));
-        proformaServicio.setBoletaurl(null);
+        proformaServicio.setBoletaUrl(null);
         proformaServicioRepository.save(proformaServicio);
     }
 
@@ -78,7 +78,7 @@ public class ProformaServicioService {
         proformaServicio.setDetalleServicio(proformaServicioDTO.getDetalleServicio());
         proformaServicio.setTiempoEstimadoEntrega(proformaServicioDTO.getTiempoEstimadoEntrega());
         proformaServicio.setCondicionesContratacion(proformaServicioDTO.getCondicionesContratacion());
-        proformaServicio.setBoletaurl(null);
+        proformaServicio.setBoletaUrl(null);
         proformaServicio.setOrdenTrabajo(ordenTrabajoRepository.findByCodigo(proformaServicioDTO.getCodigo_ordentrabajo()));
         proformaServicioRepository.save(proformaServicio);
     }
@@ -99,7 +99,7 @@ public class ProformaServicioService {
         // Obtener las proformas de servicio asociadas a esas ordenes de trabajo
         return ordenesDeTrabajo.stream()
                 .map(ordenTrabajo -> {
-                    ProformaServicio proformaServicio = ordenTrabajo.getProformasServicio(); // Relación uno a uno
+                    ProformaServicio proformaServicio = ordenTrabajo.ge; //
                     ProformaServicioListaDTO proformaServicioListaDTO = new ProformaServicioListaDTO();
 
                     // Mapear los campos de ProformaServicio al DTO

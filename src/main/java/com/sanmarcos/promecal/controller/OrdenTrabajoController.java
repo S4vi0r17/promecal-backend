@@ -1,7 +1,6 @@
 package com.sanmarcos.promecal.controller;
 
 import com.sanmarcos.promecal.model.dto.*;
-import com.sanmarcos.promecal.service.ClienteService;
 import com.sanmarcos.promecal.service.OrdenTrabajoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Data
 public class OrdenTrabajoVistaDTO {
 
-    private Long dni;
+    private String dni;
 
     private String nombrecompleto;
 

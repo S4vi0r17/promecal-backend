@@ -7,14 +7,16 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Table(name = "orden_trabajo_historial")
 public class OrdenTrabajoHistorial {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "orden_trabajo_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "orden_trabajo_id", referencedColumnName = "id")
     private OrdenTrabajo ordenTrabajo;
 
     @Column(name = "fecha_modificacion")

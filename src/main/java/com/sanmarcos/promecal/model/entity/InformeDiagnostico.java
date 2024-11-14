@@ -13,20 +13,38 @@ public class InformeDiagnostico {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "ordentrabajo", referencedColumnName = "id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ordentrabajo", referencedColumnName = "id")
     private OrdenTrabajo ordenTrabajo;
 
+    @Column(name = "fecha")
     private LocalDateTime fecha;
+
+    @Column(name = "estadoactual")
     private String estadoActual;
+
+    @Column(name = "problemasencontrados")
     private String problemasEncontrados;
+
+    @Column(name = "diagnosticotecnico")
     private String diagnosticoTecnico;
+
+    @Column(name = "recomendaciones")
     private String recomendaciones;
+
+    @Column(name = "factibilidadreparacion")
     private String factibilidadReparacion;
+
+    @Column(name = "observacionesadicionales")
     private String observacionesAdicionales;
+
+    @Column(name = "numeroserie")
     private String numeroSerie;
-    private Boolean equipoirreparable;
+
+    @Column(name = "equipoirreparable")
+    private Boolean equipoIrreparable;
 
 }

@@ -22,7 +22,7 @@ public class ClienteService {
         cliente.setDni(clienteDTO.getDni());
         cliente.setCelular(clienteDTO.getCelular());
         cliente.setDireccion(clienteDTO.getDireccion());
-        cliente.setNombrecompleto(clienteDTO.getNombrecompleto());
+        cliente.setNombreCompleto(clienteDTO.getNombrecompleto());
         clienteRepository.save(cliente);
     }
 
@@ -33,7 +33,7 @@ public class ClienteService {
             clientelistadto.setDni(cliente.getDni());
             clientelistadto.setCelular(cliente.getCelular());
             clientelistadto.setDireccion(cliente.getDireccion());
-            clientelistadto.setNombrecompleto(cliente.getNombrecompleto());
+            clientelistadto.setNombrecompleto(cliente.getNombreCompleto());
             clientelistadto.setId(cliente.getId());
             return clientelistadto;
         }).collect(Collectors.toList());
@@ -46,14 +46,14 @@ public class ClienteService {
         clienteDTO.setDni(cliente.getDni());
         clienteDTO.setCelular(cliente.getCelular());
         clienteDTO.setDireccion(cliente.getDireccion());
-        clienteDTO.setNombrecompleto(cliente.getNombrecompleto());
+        clienteDTO.setNombrecompleto(cliente.getNombreCompleto());
         return clienteDTO;
     }
 
     //Metodo para actualizar un cliente
     public void actualizarCliente(Long id, ClienteDTO clienteDTO) throws IOException {
         Cliente cliente= clienteRepository.findById(id).orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
-        cliente.setNombrecompleto(clienteDTO.getNombrecompleto());
+        cliente.setNombreCompleto(clienteDTO.getNombrecompleto());
         cliente.setDireccion(clienteDTO.getDireccion());
         cliente.setCelular(clienteDTO.getCelular());
         cliente.setDni(clienteDTO.getDni());

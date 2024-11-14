@@ -11,20 +11,24 @@ import java.util.List;
 
 @Entity
 @Data
-@Table(name = "usuarios", uniqueConstraints = {@UniqueConstraint(columnNames = {"nombreusuario"})})
+@Table(name = "usuarios")
 public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
-    @Column(nullable = false)
+    @Column(name = "nombreusuario", nullable = false, unique = true)
     private String nombreusuario;
-
+    @Column(name = "nombrecompleto")
     private String nombrecompleto;
+    @Column(name = "correoelectronico")
     private String correoelectronico;
+    @Column(name = "contrasena")
     private String contrasena;
 
     @Enumerated(EnumType.STRING)
-    Rol rol;
+    @Column(name = "rol")
+    private Rol rol;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
