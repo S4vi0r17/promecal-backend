@@ -1,6 +1,4 @@
 package com.sanmarcos.promecal.service;
-
-import com.sanmarcos.promecal.model.dto.OrdenTrabajoDTO;
 import com.sanmarcos.promecal.model.dto.OrdenTrabajoHistorialDTO;
 import com.sanmarcos.promecal.model.dto.OrdenTrabajoListaDTO;
 import com.sanmarcos.promecal.model.dto.OrdenTrabajoVistaDTO;
@@ -96,23 +94,23 @@ public class OrdenTrabajoService {
         return ordenTrabajoListaDTO;
     }
     // Crear un nuevo orden trabajo
-    public void insertarOrdenTrabajo(OrdenTrabajoDTO ordenTrabajoDTO, File file) {
+    public void insertarOrdenTrabajo(OrdenTrabajoVistaDTO ordenTrabajoVistaDTO, File file) {
         // Verificar si ya existe una orden de trabajo con el mismo código
-        if (ordenTrabajoRepository.existsByCodigo(ordenTrabajoDTO.getCodigo())) {
+        if (ordenTrabajoRepository.existsByCodigo(ordenTrabajoVistaDTO.getCodigo())) {
             throw new RuntimeException(" El código de orden de trabajo ya está en uso.");
         }
         // Crear la nueva orden de trabajo
         OrdenTrabajo ordenTrabajo= new OrdenTrabajo();
-        ordenTrabajo.setDescripcion(ordenTrabajoDTO.getDescripcion());
-        ordenTrabajo.setFecha(ordenTrabajoDTO.getFecha());
-        ordenTrabajo.setCodigo(ordenTrabajoDTO.getCodigo());
-        ordenTrabajo.setManchas(ordenTrabajoDTO.getManchas());
-        ordenTrabajo.setGolpes(ordenTrabajoDTO.getGolpes());
-        ordenTrabajo.setModelo(ordenTrabajoDTO.getModelo());
-        ordenTrabajo.setRajaduras(ordenTrabajoDTO.getRajaduras());
-        ordenTrabajo.setMarca(ordenTrabajoDTO.getMarca());
+        ordenTrabajo.setDescripcion(ordenTrabajoVistaDTO.getDescripcion());
+        ordenTrabajo.setFecha(ordenTrabajoVistaDTO.getFecha());
+        ordenTrabajo.setCodigo(ordenTrabajoVistaDTO.getCodigo());
+        ordenTrabajo.setManchas(ordenTrabajoVistaDTO.getManchas());
+        ordenTrabajo.setGolpes(ordenTrabajoVistaDTO.getGolpes());
+        ordenTrabajo.setModelo(ordenTrabajoVistaDTO.getModelo());
+        ordenTrabajo.setRajaduras(ordenTrabajoVistaDTO.getRajaduras());
+        ordenTrabajo.setMarca(ordenTrabajoVistaDTO.getMarca());
         // Buscar cliente asociado
-        Cliente cliente= clienteRepository.findById(ordenTrabajoDTO.getClienteId()).orElseThrow(()-> new RuntimeException("Cliente no encontrado"));
+        Cliente cliente= clienteRepository.findByDni(ordenTrabajoVistaDTO.getDni()).orElseThrow(()-> new RuntimeException("Cliente no encontrado"));
         ordenTrabajo.setCliente(cliente);
         //Setear por defecto
         ordenTrabajo.setEstado(true);
@@ -192,62 +190,62 @@ public class OrdenTrabajoService {
         }
     }
     // Metodo para actualizar una orden de trabajo
-    public void actualizarOrdenTrabajo(Long id, OrdenTrabajoDTO ordenTrabajoDTO, File file) {
+    public void actualizarOrdenTrabajo(Long id, OrdenTrabajoVistaDTO ordenTrabajoVistaDTO, File file) {
         // Verificar si el código ya existe en otra orden de trabajo
-        if (ordenTrabajoRepository.existsByCodigoAndIdNot(ordenTrabajoDTO.getCodigo(), id)) {
-            throw new RuntimeException("El codigo del dto y entity ya está en uso."+ordenTrabajoDTO.getCodigo());
+        if (ordenTrabajoRepository.existsByCodigoAndIdNot(ordenTrabajoVistaDTO.getCodigo(), id)) {
+            throw new RuntimeException("El codigo del dto y entity ya está en uso."+ordenTrabajoVistaDTO.getCodigo());
         }
         // Obtener la orden de trabajo existente
         OrdenTrabajo ordenTrabajo = ordenTrabajoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Orden de Trabajo no encontrada"));
         try {
 
-            if (!ordenTrabajo.getCodigo().equals(ordenTrabajoDTO.getCodigo())) {
-                    registrarHistorial(ordenTrabajo, "codigo", ordenTrabajo.getCodigo(), ordenTrabajoDTO.getCodigo());
+            if (!ordenTrabajo.getCodigo().equals(ordenTrabajoVistaDTO.getCodigo())) {
+                    registrarHistorial(ordenTrabajo, "codigo", ordenTrabajo.getCodigo(), ordenTrabajoVistaDTO.getCodigo());
                 // Actualizar el código en las entidades relacionadas (InformeDiagnostico, ProformaServicio)
-                actualizarEntidadesRelacionadas(ordenTrabajo.getCodigo(), ordenTrabajoDTO.getCodigo());
+                actualizarEntidadesRelacionadas(ordenTrabajo.getCodigo(), ordenTrabajoVistaDTO.getCodigo());
 
-                ordenTrabajo.setCodigo(ordenTrabajoDTO.getCodigo());
+                ordenTrabajo.setCodigo(ordenTrabajoVistaDTO.getCodigo());
             }
 
             // Compara los valores antiguos con los nuevos y guarda el historial de modificaciones si hay cambios
-            if (!ordenTrabajo.getDescripcion().equals(ordenTrabajoDTO.getDescripcion())) {
-                registrarHistorial(ordenTrabajo, "descripcion", ordenTrabajo.getDescripcion(), ordenTrabajoDTO.getDescripcion());
-                ordenTrabajo.setDescripcion(ordenTrabajoDTO.getDescripcion());
+            if (!ordenTrabajo.getDescripcion().equals(ordenTrabajoVistaDTO.getDescripcion())) {
+                registrarHistorial(ordenTrabajo, "descripcion", ordenTrabajo.getDescripcion(), ordenTrabajoVistaDTO.getDescripcion());
+                ordenTrabajo.setDescripcion(ordenTrabajoVistaDTO.getDescripcion());
             }
 
-            if (!ordenTrabajo.getFecha().equals(ordenTrabajoDTO.getFecha())) {
-                registrarHistorial(ordenTrabajo, "fecha", ordenTrabajo.getFecha(), ordenTrabajoDTO.getFecha());
-                ordenTrabajo.setFecha(ordenTrabajoDTO.getFecha());
+            if (!ordenTrabajo.getFecha().equals(ordenTrabajoVistaDTO.getFecha())) {
+                registrarHistorial(ordenTrabajo, "fecha", ordenTrabajo.getFecha(), ordenTrabajoVistaDTO.getFecha());
+                ordenTrabajo.setFecha(ordenTrabajoVistaDTO.getFecha());
             }
 
-            if (!ordenTrabajo.getManchas().equals(ordenTrabajoDTO.getManchas())) {
-                registrarHistorial(ordenTrabajo, "manchas", ordenTrabajo.getManchas(), ordenTrabajoDTO.getManchas());
-                ordenTrabajo.setManchas(ordenTrabajoDTO.getManchas());
+            if (!ordenTrabajo.getManchas().equals(ordenTrabajoVistaDTO.getManchas())) {
+                registrarHistorial(ordenTrabajo, "manchas", ordenTrabajo.getManchas(), ordenTrabajoVistaDTO.getManchas());
+                ordenTrabajo.setManchas(ordenTrabajoVistaDTO.getManchas());
             }
 
-            if (!ordenTrabajo.getGolpes().equals(ordenTrabajoDTO.getGolpes())) {
-                registrarHistorial(ordenTrabajo, "golpes", ordenTrabajo.getGolpes(), ordenTrabajoDTO.getGolpes());
-                ordenTrabajo.setGolpes(ordenTrabajoDTO.getGolpes());
+            if (!ordenTrabajo.getGolpes().equals(ordenTrabajoVistaDTO.getGolpes())) {
+                registrarHistorial(ordenTrabajo, "golpes", ordenTrabajo.getGolpes(), ordenTrabajoVistaDTO.getGolpes());
+                ordenTrabajo.setGolpes(ordenTrabajoVistaDTO.getGolpes());
             }
 
-            if (!ordenTrabajo.getModelo().equals(ordenTrabajoDTO.getModelo())) {
-                registrarHistorial(ordenTrabajo, "modelo", ordenTrabajo.getModelo(), ordenTrabajoDTO.getModelo());
-                ordenTrabajo.setModelo(ordenTrabajoDTO.getModelo());
+            if (!ordenTrabajo.getModelo().equals(ordenTrabajoVistaDTO.getModelo())) {
+                registrarHistorial(ordenTrabajo, "modelo", ordenTrabajo.getModelo(), ordenTrabajoVistaDTO.getModelo());
+                ordenTrabajo.setModelo(ordenTrabajoVistaDTO.getModelo());
             }
 
-            if (!ordenTrabajo.getRajaduras().equals(ordenTrabajoDTO.getRajaduras())) {
-                registrarHistorial(ordenTrabajo, "rajaduras", ordenTrabajo.getRajaduras(), ordenTrabajoDTO.getRajaduras());
-                ordenTrabajo.setRajaduras(ordenTrabajoDTO.getRajaduras());
+            if (!ordenTrabajo.getRajaduras().equals(ordenTrabajoVistaDTO.getRajaduras())) {
+                registrarHistorial(ordenTrabajo, "rajaduras", ordenTrabajo.getRajaduras(), ordenTrabajoVistaDTO.getRajaduras());
+                ordenTrabajo.setRajaduras(ordenTrabajoVistaDTO.getRajaduras());
             }
 
-            if (!ordenTrabajo.getMarca().equals(ordenTrabajoDTO.getMarca())) {
-                registrarHistorial(ordenTrabajo, "marca", ordenTrabajo.getMarca(), ordenTrabajoDTO.getMarca());
-                ordenTrabajo.setMarca(ordenTrabajoDTO.getMarca());
+            if (!ordenTrabajo.getMarca().equals(ordenTrabajoVistaDTO.getMarca())) {
+                registrarHistorial(ordenTrabajo, "marca", ordenTrabajo.getMarca(), ordenTrabajoVistaDTO.getMarca());
+                ordenTrabajo.setMarca(ordenTrabajoVistaDTO.getMarca());
             }
 
             // Actualizar el cliente
-            ordenTrabajo.setCliente(clienteRepository.findById(ordenTrabajoDTO.getClienteId())
+            ordenTrabajo.setCliente(clienteRepository.findByDni(ordenTrabajoVistaDTO.getDni())
                     .orElseThrow(() -> new RuntimeException("Cliente no encontrado")));
 
             // Guardar la orden de trabajo con los nuevos valores
