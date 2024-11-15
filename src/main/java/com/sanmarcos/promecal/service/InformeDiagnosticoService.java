@@ -50,16 +50,19 @@ public class InformeDiagnosticoService {
         String name=driveService.uploadPdfToDrive(pdfcreado,"informe");
         System.out.println(name);
         emailService.enviarCorreo("Jefferson.asencios@unmsm.edu.pe",name);
-        // Borrar el archivo después de enviarlo por correo
-        if (pdfcreado.exists()) {
-            boolean deleted = pdfcreado.delete();
-            if (deleted) {
-                System.out.println("El archivo PDF se ha borrado correctamente.");
-            } else {
-                System.out.println("No se pudo borrar el archivo PDF.");
+        //Intentar eliminar el archivo PDF inmediatamente después de enviarlo
+        try {
+            if (pdfcreado.exists()) {
+                boolean eliminado = pdfcreado.delete();
+                if (eliminado) {
+                    System.out.println("El archivo PDF se eliminó exitosamente.");
+                } else {
+                    System.out.println("No se pudo eliminar el archivo PDF.");
+                }
             }
+        } catch (Exception e) {
+            System.out.println("Error al intentar eliminar el archivo PDF: " + e.getMessage());
         }
-        ;
     }
 
     public File generarPDF(InformeDiagnostico informeDiagnostico) throws IOException {
