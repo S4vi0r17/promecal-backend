@@ -33,9 +33,9 @@ public class SecurityConfig {
                                 .requestMatchers("/api/usuarios/**").hasRole("ADMINISTRADOR")
                                 .requestMatchers("/api/clientes/**").hasAuthority("ROLE_EJECUTIVO_DE_VENTAS")
                                 .requestMatchers("/api/ordentrabajo/**").hasAuthority("ROLE_ASISTENTE_DE_RECEPCION")
+                                .requestMatchers(HttpMethod.GET, "/api/ordentrabajo", "/api/ordentrabajo/{id}/**").hasAuthority("ROLE_ASISTENTE_TECNICO")
                                 .requestMatchers("/api/informediagnostico/**").hasAuthority("ROLE_ASISTENTE_TECNICO")
                                 .requestMatchers("/api/proformaservicio/**").hasAuthority("ROLE_EJECUTIVO_DE_VENTAS")
-                                //.requestMatchers(HttpMethod.GET, "/api/ordentrabajo", "/api/ordentrabajo/{id}/**").hasAuthority("ROLE_ASISTENTE_TECNICO")
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManager ->
