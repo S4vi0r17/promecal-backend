@@ -5,11 +5,9 @@ import com.sanmarcos.promecal.model.dto.LoginRequest;
 import com.sanmarcos.promecal.model.dto.RegisterRequest;
 import com.sanmarcos.promecal.model.entity.Usuario;
 import com.sanmarcos.promecal.repository.UsuarioRepository;
-import com.sanmarcos.promecal.model.entity.Rol;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +51,7 @@ public class AuthService {
 
         return AuthResponse.builder()
                 .token(token)
+                .rol(usuario.getRol())
                 .build();
     }
     public AuthResponse register(RegisterRequest request) {
@@ -67,7 +66,7 @@ public class AuthService {
         // Generar el token JWT después del registro
         String token = jwtService.getToken(usuario, usuario.getRol());
 
-        return AuthResponse.builder().token(token).build();
+        return AuthResponse.builder().token(token).rol(usuario.getRol()).build();
     }
     /*
     public AuthResponse register(RegisterRequest request) {
