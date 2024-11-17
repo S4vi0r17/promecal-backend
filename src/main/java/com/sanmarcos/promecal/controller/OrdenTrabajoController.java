@@ -29,17 +29,21 @@ public class OrdenTrabajoController {
 
         return ordenTrabajoService.obtenerOrdenesTrabajoConFiltros(fechaInicio, fechaFin, dni, modelo, codigo);
     }
+    @GetMapping("/codigos")
+    public List<String> obtenerCodigos(){
+        return ordenTrabajoService.obtenerCodigos();
+    }
 
     //Endpoint para guardar una orden de trabajo
     @PostMapping
-    public ResponseEntity<String> insertarOrdenTrabajo(@RequestPart("orden") OrdenTrabajoVistaDTO ordenTrabajoVistaDTO, @RequestPart(value="file") MultipartFile file) {
+    public ResponseEntity<String> insertarOrdenTrabajo(@RequestPart("orden") OrdenTrabajoDTO ordenTrabajoDTO, @RequestPart(value="file") MultipartFile file) {
         try {
             if (file.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error, no hay archivo");
             }
             File tempFile = File.createTempFile("documento_remision_", ".pdf");
             file.transferTo(tempFile);
-            ordenTrabajoService.insertarOrdenTrabajo(ordenTrabajoVistaDTO,tempFile);
+            ordenTrabajoService.insertarOrdenTrabajo(ordenTrabajoDTO,tempFile);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar orden de trabajo" + e.getMessage());
@@ -69,7 +73,7 @@ public class OrdenTrabajoController {
     // Endpoint para actualizar la orden de trabajo
     @PutMapping("/{id}")
     public ResponseEntity<String> actualizarOrdenTrabajo(@PathVariable Long id,
-                                                         @RequestPart("orden") OrdenTrabajoVistaDTO ordenTrabajoVistaDTO,
+                                                         @RequestPart("orden") OrdenTrabajoDTO ordenTrabajoDTO,
                                                          @RequestPart(value = "file", required = false) MultipartFile file) {
         try {
             // Si no se ha subido ningún archivo, se puede proceder con la actualización sin procesarlo
@@ -78,10 +82,10 @@ public class OrdenTrabajoController {
                 File tempFile = File.createTempFile("documento_remision_", ".pdf");
                 file.transferTo(tempFile);
                 // Llamar al servicio para actualizar la orden de trabajo, pasando el archivo
-                ordenTrabajoService.actualizarOrdenTrabajo(id, ordenTrabajoVistaDTO, tempFile);
+                ordenTrabajoService.actualizarOrdenTrabajo(id, ordenTrabajoDTO, tempFile);
             } else {
                 // Si no hay archivo, simplemente actualizar la orden de trabajo sin cambios en el archivo
-                ordenTrabajoService.actualizarOrdenTrabajo(id, ordenTrabajoVistaDTO, null);  // null indica que no hay archivo
+                ordenTrabajoService.actualizarOrdenTrabajo(id, ordenTrabajoDTO, null);  // null indica que no hay archivo
             }
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {

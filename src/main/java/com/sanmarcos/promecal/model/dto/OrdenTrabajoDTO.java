@@ -12,13 +12,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class OrdenTrabajoDTO {
 
-    private Long clienteId;
-
     private String dni;
 
     private String nombrecompleto;
-
-    private String codigo;
 
     private LocalDateTime fecha;
 
