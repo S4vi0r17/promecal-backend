@@ -1,5 +1,7 @@
 package com.sanmarcos.promecal.service;
 
+import com.sanmarcos.promecal.exception.ContraseniaIncorrectaException;
+import com.sanmarcos.promecal.exception.UsuarioNoEncontradoException;
 import com.sanmarcos.promecal.model.dto.AuthResponse;
 import com.sanmarcos.promecal.model.dto.LoginRequest;
 import com.sanmarcos.promecal.model.dto.RegisterRequest;
@@ -37,14 +39,19 @@ public class AuthService {
                 .build();
     }*/
     public AuthResponse login(LoginRequest request) {
+        // Buscar al usuario por su nombre de usuario
+        Usuario usuario = usuarioRepository.findByNombreusuario(request.getNombreusuario())
+                .orElseThrow(() -> new UsuarioNoEncontradoException("Usuario no encontrado"));
+
+        // Verificar si la contraseña coincide
+        if (!passwordEncoder.matches(request.getContrasena(), usuario.getPassword())) {
+            throw new ContraseniaIncorrectaException("La contraseña es incorrecta");
+        }
+
         // Autenticar al usuario usando el nombre de usuario y la contraseña
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getNombreusuario(), request.getContrasena())
         );
-
-        // Buscar al usuario por su nombre de usuario
-        Usuario usuario = usuarioRepository.findByNombreusuario(request.getNombreusuario())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         // Generar el token JWT con el rol del usuario
         String token = jwtService.getToken(usuario, usuario.getRol());
