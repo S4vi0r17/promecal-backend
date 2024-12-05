@@ -31,9 +31,10 @@ public class JwtService {
                 .signWith(getKey(), SignatureAlgorithm.HS256).compact();
     }*/
     // Metodo para generar el token JWT con claims adicionales, como el rol
-    public String getToken(UserDetails user, Rol rol) {
+    public String getToken(UserDetails user, Rol rol, String nombrecompleto) {
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("role", rol.name());  // Agregar el rol como cadena en los claims
+        extraClaims.put("nombrecompleto", nombrecompleto);  // Agregar el nombre completo del usuario
         return generateToken(extraClaims, user);
     }
     // Metodo privado que construye el token con claims adicionales y firma HS256

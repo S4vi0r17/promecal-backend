@@ -54,7 +54,7 @@ public class AuthService {
         );
 
         // Generar el token JWT con el rol del usuario
-        String token = jwtService.getToken(usuario, usuario.getRol());
+        String token = jwtService.getToken(usuario, usuario.getRol(), usuario.getNombrecompleto());
 
         return AuthResponse.builder()
                 .token(token)
@@ -71,7 +71,7 @@ public class AuthService {
         usuarioRepository.save(usuario);
 
         // Generar el token JWT después del registro
-        String token = jwtService.getToken(usuario, usuario.getRol());
+        String token = jwtService.getToken(usuario, usuario.getRol(), usuario.getNombrecompleto());
 
         return AuthResponse.builder().token(token).rol(usuario.getRol()).build();
     }
