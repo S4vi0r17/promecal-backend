@@ -40,7 +40,6 @@ public class ProformaServicioService {
             throw new ProformaServicioNotFoundException("No se encontraron proformas de servicio.");
         }
         return proformaServicioRepository.findAll().stream().map(proformaServicio -> {
-
             ProformaServicioListaDTO proformaServicioListaDTO = new ProformaServicioListaDTO();
             proformaServicioListaDTO.setDetalleServicio(proformaServicio.getDetalleServicio());
             proformaServicioListaDTO.setId(proformaServicio.getId());
@@ -73,14 +72,10 @@ public class ProformaServicioService {
                 .orElseThrow(() -> new OrdenTrabajoNoEncontradaException("Orden de Trabajo no encontrada"));
 
         proformaServicio.setOrdenTrabajo(ordenTrabajo);
-
         proformaServicio.setBoletaUrl(null);
 
-        try {
-            proformaServicioRepository.save(proformaServicio);
-        } catch (Exception e) {
-            throw new ProformaServicioException("Error al guardar la proforma de servicio: " + e.getMessage());
-        }
+        // Guardar la proforma de servicio
+        proformaServicioRepository.save(proformaServicio);
     }
 
     // Obtener proforma de servicio por ID
@@ -99,6 +94,7 @@ public class ProformaServicioService {
 
         return proformaServicioDTO;
     }
+
     // Metodo para actualizar una proforma de servicio
     public void actualizarProformaServicio(Long id, ProformaServicioDTO proformaServicioDTO) {
         // Buscar la proforma de servicio
@@ -127,18 +123,15 @@ public class ProformaServicioService {
         // Guardar la proforma actualizada
         proformaServicioRepository.save(proformaServicio);
     }
+
     // Eliminar una proforma de servicio
     public void eliminarProformaServicio(Long id) {
         ProformaServicio proformaServicio = proformaServicioRepository.findById(id)
                 .orElseThrow(() -> new ProformaServicioNotFoundException("Proforma de Servicio no encontrada"));
 
-        try {
-            proformaServicioRepository.delete(proformaServicio);
-        } catch (Exception e) {
-            // Si ocurre algún error inesperado al eliminar
-            throw new ErrorEliminarProformaServicioException("Error al eliminar la Proforma de Servicio: " + e.getMessage());
-        }
+        proformaServicioRepository.delete(proformaServicio);
     }
+
     // Obtener proformas de servicio por cliente
     public List<ProformaServicioListaDTO> obtenerProformaServicioPorCliente(String dni) {
         // Validar que el DNI no esté vacío o nulo
@@ -179,6 +172,7 @@ public class ProformaServicioService {
                 .filter(dto -> dto.getId() != null)  // Filtrar los DTOs con ID null (si no hay proforma asociada)
                 .collect(Collectors.toList());
     }
+
     // Registrar el pago de una proforma
     public void registrarPago(Long id, File tempFile) {
         // Buscar la Proforma de Servicio por ID
@@ -200,5 +194,4 @@ public class ProformaServicioService {
         // Guardar la proforma con la nueva URL de la boleta
         proformaServicioRepository.save(proformaServicio);
     }
-
 }
