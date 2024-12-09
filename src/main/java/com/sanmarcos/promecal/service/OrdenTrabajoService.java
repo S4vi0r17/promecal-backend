@@ -170,7 +170,7 @@ public class OrdenTrabajoService {
                 String fileId = extraerFileIdDeUrl(documento.getRutaArchivo()); // Extrae el ID del archivo de la URL
                 driveService.eliminarArchivoEnDrive(fileId); // Eliminar archivo en Drive
             } catch (Exception e) {
-                throw new DocumentoEliminacionException("Error al eliminar el archivo asociado en Drive: " + documento.getRutaArchivo(), e);
+                throw new DocumentoEliminacionException("Error al eliminar el archivo asociado en Drive: " + documento.getRutaArchivo());
             }
         }
         // Eliminar la orden de trabajo de la base de datos

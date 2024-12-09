@@ -1,8 +1,4 @@
 package com.sanmarcos.promecal.controller;
-
-import com.sanmarcos.promecal.exception.ClienteNoEncontradoException;
-import com.sanmarcos.promecal.exception.ClienteYaExisteException;
-import com.sanmarcos.promecal.exception.DniDuplicadoException;
 import com.sanmarcos.promecal.model.dto.ClienteDTO;
 import com.sanmarcos.promecal.model.dto.ClienteListaDTO;
 import com.sanmarcos.promecal.service.ClienteService;
@@ -28,53 +24,27 @@ public class ClienteController {
     //Endpoint para guardar un cliente
     @PostMapping
     public ResponseEntity<String> insertarCliente(@RequestBody ClienteDTO clienteDTO) {
-        try {
-            // Intentar insertar el cliente
-            clienteService.insertarCliente(clienteDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Cliente registrado con éxito.");
-        } catch (ClienteYaExisteException e) {
-            // Manejar el caso en el que el cliente ya existe
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        } catch (Exception e) {
-            // Manejar errores inesperados
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al guardar cliente: " + e.getMessage());
-        }
+        clienteService.insertarCliente(clienteDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Cliente registrado con éxito.");
     }
-
     //Endpoint para obtener los detalles de un cliente por id
     @GetMapping("/{id}")
     public ResponseEntity<ClienteDTO> obtenerDetallesCliente(@PathVariable Long id) {
-        try {
-            ClienteDTO clienteDTO = clienteService.obtenerClientePorId(id);
-            return new ResponseEntity<>(clienteDTO, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+        ClienteDTO clienteDTO = clienteService.obtenerClientePorId(id);
+        return new ResponseEntity<>(clienteDTO, HttpStatus.OK);
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<String> actualizarCliente(@PathVariable Long id, @RequestBody ClienteDTO clienteDTO) {
-        try {
-            clienteService.actualizarCliente(id, clienteDTO);
-            return ResponseEntity.ok("Cliente actualizado con éxito.");
-        } catch (ClienteNoEncontradoException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (DniDuplicadoException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado: " + e.getMessage());
-        }
+        clienteService.actualizarCliente(id, clienteDTO);
+        return ResponseEntity.ok("Cliente actualizado con éxito.");
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> eliminarCliente(@PathVariable Long id) {
-        try {
-            clienteService.eliminarCliente(id);
-            return ResponseEntity.noContent().build();
-        } catch (ClienteNoEncontradoException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado: " + e.getMessage());
-        }
+        clienteService.eliminarCliente(id);
+        return ResponseEntity.noContent().build();  // Respuesta 204 No Content
     }
+
 
 }

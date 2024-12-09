@@ -27,7 +27,27 @@ public class GlobalExceptionHandler {
     ) {
         return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, request);
     }
-
+    @ExceptionHandler(ClienteYaExisteException.class)
+    public ResponseEntity<ErrorResponse> handleClienteYaExisteException(
+            ClienteYaExisteException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(ex, HttpStatus.CONFLICT, request);
+    }
+    @ExceptionHandler(DniDuplicadoException.class)
+    public ResponseEntity<ErrorResponse> handleDniDuplicadoException(
+            DniDuplicadoException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(ex, HttpStatus.CONFLICT, request);
+    }
+    @ExceptionHandler(ClienteNoEncontradoException.class)
+    public ResponseEntity<ErrorResponse> handleClienteNoEncontradoException(
+            ClienteNoEncontradoException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(ex, HttpStatus.NOT_FOUND, request);
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneralException(
             Exception ex,

@@ -47,7 +47,8 @@ public class ClienteService {
 
     // Obtener un cliente por ID
     public ClienteDTO obtenerClientePorId(Long id) {
-        Cliente cliente = clienteRepository.findById(id).orElseThrow(()-> new RuntimeException("Cliente no encontrado"));
+        Cliente cliente = clienteRepository.findById(id).orElseThrow(() ->
+                new ClienteNoEncontradoException("Cliente con ID " + id + " no encontrado"));
         ClienteDTO clienteDTO = new ClienteDTO();
         clienteDTO.setDni(cliente.getDni());
         clienteDTO.setCelular(cliente.getCelular());
