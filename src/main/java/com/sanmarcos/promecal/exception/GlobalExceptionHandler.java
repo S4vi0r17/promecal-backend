@@ -41,6 +41,24 @@ public class GlobalExceptionHandler {
     ) {
         return buildErrorResponse(ex, HttpStatus.CONFLICT, request);
     }
+    @ExceptionHandler(OrdenTrabajoNoEncontradaException.class)
+    public ResponseEntity<ErrorResponse> handleOrdenTrabajoNoEncontradaException(
+            OrdenTrabajoNoEncontradaException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.NOT_FOUND, request);
+    }
+
+    @ExceptionHandler(NumeroSerieDuplicadoException.class)
+    public ResponseEntity<ErrorResponse> handleNumeroSerieDuplicadoException(
+            NumeroSerieDuplicadoException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.CONFLICT, request);
+    }
+
+    @ExceptionHandler(FechaInvalidaException.class)
+    public ResponseEntity<ErrorResponse> handleFechaInvalidaException(
+            FechaInvalidaException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, request);
+    }
+
     @ExceptionHandler(ClienteNoEncontradoException.class)
     public ResponseEntity<ErrorResponse> handleClienteNoEncontradoException(
             ClienteNoEncontradoException ex,

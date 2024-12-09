@@ -86,6 +86,7 @@ public class InformeDiagnosticoService {
         }
     }
 
+
     public File generarPDF(InformeDiagnostico informeDiagnostico) throws IOException {
         // Crear un archivo temporal
         File tempFile = File.createTempFile("informe_", ".pdf");
