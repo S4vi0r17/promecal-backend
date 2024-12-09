@@ -15,6 +15,7 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/ordentrabajo")
@@ -62,7 +63,11 @@ public class OrdenTrabajoController {
         File tempFile = null;
         try {
             if (file == null || file.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Debe proporcionar un archivo válido.");
+                throw new ArchivoVacioException("Debe proporcionar un archivo válido.");
+            }
+            // Validación: si el tipo de archivo no es PDF
+            if (!Objects.equals(file.getContentType(), "application/pdf")) {
+                throw new TipoArchivoInvalidoException("El archivo debe ser de tipo PDF.");
             }
             ordenTrabajoService.validarOrdenTrabajo(ordenTrabajoDTO, file);
             tempFile = File.createTempFile("documento_remision_", ".pdf");
