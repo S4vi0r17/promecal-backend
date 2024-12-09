@@ -25,6 +25,15 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
+            UsuariosNoEncontradosException.class,
+            UsuarioInvalidException.class,
+            UsuarioNoEncontradoException.class,
+            DatosInvalidosException.class
+    })
+    public ResponseEntity<ErrorResponse> handleUsuarioException(Exception ex, HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, request);  // O cualquier código HTTP que consideres adecuado
+    }
+    @ExceptionHandler({
             ProformaServicioException.class,
             InvalidPriceException.class,
             ArchivoVacioException.class,
@@ -48,7 +57,7 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex, HttpStatus.CONFLICT, request);
     }
 
-    @ExceptionHandler(DocumentoEliminacionException.class)
+    @ExceptionHandler({DocumentoEliminacionException.class,InformeDiagnosticoException.class})
     public ResponseEntity<ErrorResponse> handleDocumentoEliminacionException(DocumentoEliminacionException ex, HttpServletRequest request) {
         return buildErrorResponse(ex, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }

@@ -99,7 +99,10 @@ public class OrdenTrabajoController {
         if (id <= 0) {
             throw new IllegalArgumentException("El ID de la orden de trabajo debe ser mayor a cero.");
         }
-
+        // Verificar que el archivo sea un PDF
+        if (!Objects.requireNonNull(file.getContentType()).equalsIgnoreCase("application/pdf")) {
+            throw new TipoArchivoInvalidoException("El archivo debe ser un PDF");
+        }
         // Si no se ha subido ningún archivo, se puede proceder con la actualización sin procesarlo
         File tempFile = null;
         if (file != null && !file.isEmpty()) {

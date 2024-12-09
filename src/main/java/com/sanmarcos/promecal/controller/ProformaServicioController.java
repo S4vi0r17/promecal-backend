@@ -1,5 +1,7 @@
 package com.sanmarcos.promecal.controller;
 
+import com.sanmarcos.promecal.exception.ArchivoVacioException;
+import com.sanmarcos.promecal.exception.TipoArchivoInvalidoException;
 import com.sanmarcos.promecal.model.dto.*;
 import com.sanmarcos.promecal.service.ProformaServicioService;
 import jakarta.validation.Valid;
@@ -11,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/proformaservicio")
@@ -65,6 +68,16 @@ public class ProformaServicioController {
 
     @PostMapping("/{id}/pago")
     public ResponseEntity<String> registrarPago(@PathVariable Long id, @RequestPart(value = "file") MultipartFile file) throws Exception {
+        // Verificar que el archivo no esté vacío
+        if (file.isEmpty()) {
+            throw new ArchivoVacioException("El archivo está vacío");
+        }
+
+        // Verificar que el archivo sea un PDF
+        if (!Objects.requireNonNull(file.getContentType()).equalsIgnoreCase("application/pdf")) {
+            throw new TipoArchivoInvalidoException("El archivo debe ser un PDF");
+        }
+
         // Crear archivo temporal para almacenar el archivo recibido
         File tempFile = File.createTempFile("boleta_", ".pdf");
         file.transferTo(tempFile);
@@ -74,4 +87,5 @@ public class ProformaServicioController {
 
         return ResponseEntity.status(HttpStatus.OK).body("Pago registrado con éxito");
     }
+
 }

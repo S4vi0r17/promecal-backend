@@ -21,7 +21,7 @@ public class UsuarioService {
 
     // Crear un nuevo usuario
     public void insertarUsuario(UsuarioDTO usuariodto) {
-        // Validaciones de campos
+        // Validaciones de campos sin lanzar excepciones, solo en caso de que falte algún campo
         if (usuariodto.getNombreusuario() == null || usuariodto.getNombreusuario().isEmpty()) {
             throw new UsuarioInvalidException("El nombre de usuario no puede estar vacío");
         }
@@ -49,15 +49,12 @@ public class UsuarioService {
 
         usuarioRepository.save(usuario);
     }
-
     // Metodo para validar el formato del correo electrónico
     private boolean isEmailValid(String email) {
         String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$"; // Expresión regular básica para correo electrónico
         Pattern pattern = Pattern.compile(emailRegex);
         return pattern.matcher(email).matches();
     }
-
-
     // Obtener todos los usuarios
     public List<UsuarioListaDTO> obtenerTodosLosUsuarios() {
         List<Usuario> usuarios = usuarioRepository.findAll();
@@ -78,8 +75,6 @@ public class UsuarioService {
             return usuarioListaDTO;
         }).collect(Collectors.toList());
     }
-
-
     // Obtener un usuario por ID
     public UsuarioVistaDTO obtenerUsuarioPorId(Long id) {
         // Buscar el usuario por ID, lanzar excepción personalizada si no se encuentra
@@ -94,9 +89,11 @@ public class UsuarioService {
         usuarioVistaDTO.setNombreusuario(usuario.getNombreusuario());
         return usuarioVistaDTO;
     }
-
-
     public void actualizarUsuario(Long id, UsuarioVistaDTO usuarioVistaDTO) {
+        // Buscar el usuario por ID, lanzando excepción si no se encuentra
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new UsuarioNoEncontradoException("Usuario con ID " + id + " no encontrado"));
+
         // Validar que el correo electrónico no esté vacío y tenga un formato correcto
         if (usuarioVistaDTO.getCorreoelectronico() == null || usuarioVistaDTO.getCorreoelectronico().isEmpty()) {
             throw new DatosInvalidosException("El correo electrónico no puede estar vacío.");
@@ -104,10 +101,6 @@ public class UsuarioService {
         if (!usuarioVistaDTO.getCorreoelectronico().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
             throw new DatosInvalidosException("El formato del correo electrónico no es válido.");
         }
-
-        // Buscar el usuario por ID, lanzando excepción si no se encuentra
-        Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new UsuarioNoEncontradoException("Usuario con ID " + id + " no encontrado"));
 
         // Actualizar los campos del usuario
         usuario.setNombreusuario(usuarioVistaDTO.getNombreusuario());
@@ -119,12 +112,12 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
 
-
     // Eliminar Usuario
     public void eliminarUsuario(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNoEncontradoException("Usuario con ID " + id + " no encontrado"));
         usuarioRepository.delete(usuario);
     }
+
 
 }
